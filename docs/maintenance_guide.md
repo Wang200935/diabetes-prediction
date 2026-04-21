@@ -42,6 +42,11 @@ bash scripts/bootstrap_rpi.sh
 /opt/health-project/shared/artifacts/
 ```
 
+建議網站本機只綁：
+```text
+127.0.0.1:8320
+```
+
 5. 安裝 systemd：
 
 ```bash
@@ -150,6 +155,7 @@ sudo systemctl status cloudflared-health-project
 - Cloudflare DNS
 - Tunnel service 狀態
 - `cloudflared` 設定檔 hostname 是否正確
+- `.env` 裡的 `APP_BIND_PORT` 是否和 tunnel 指向的 port 一致
 
 ### `/api/predict` 很慢或大量失敗
 先查：

@@ -38,6 +38,7 @@ bash scripts/bootstrap_rpi.sh
 - `APP_ALLOWED_ORIGINS`
 - `APP_ALLOWED_HOSTS`
 - artifact 路徑
+- `APP_BIND_PORT`
 
 ## 6. 第三步：放置 artifact
 把模型檔放到：
@@ -78,7 +79,7 @@ sudo cp deploy/raspberry_pi/cloudflared-config.yml.example /etc/cloudflared/heal
 
 讓它指向：
 ```text
-http://127.0.0.1:8000
+http://127.0.0.1:8320
 ```
 
 ## 9. 第六步：安裝 systemd
