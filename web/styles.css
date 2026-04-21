@@ -159,6 +159,21 @@ h3 {
   max-width: 900px;
 }
 
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(29, 123, 131, 0.14);
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--teal);
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
 .hero-copy h1 {
   max-width: 12ch;
   margin: 0 auto;
@@ -176,6 +191,31 @@ h3 {
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 24px;
+}
+
+.home-quick-points {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.quick-point {
+  display: grid;
+  gap: 6px;
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(20, 48, 56, 0.06);
+}
+
+.quick-point strong {
+  font-family: "Sora", sans-serif;
+  font-size: 1.02rem;
+}
+
+.quick-point span {
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 .card,
@@ -307,6 +347,37 @@ h3 {
   border: 1px solid rgba(20, 48, 56, 0.07);
 }
 
+.step-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.step-chip {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.46);
+  border: 1px solid rgba(20, 48, 56, 0.06);
+}
+
+.step-chip span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.step-chip strong {
+  font-size: 1rem;
+}
+
+.step-chip.active {
+  background: rgba(255, 255, 255, 0.74);
+  border-color: rgba(29, 123, 131, 0.16);
+}
+
 .bmi-helper-head {
   display: flex;
   justify-content: space-between;
@@ -386,6 +457,24 @@ h3 {
 .bmi-badge.risk {
   background: rgba(191, 77, 93, 0.18);
   color: #8f2b3d;
+}
+
+.bmi-helper-note {
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.46);
+  border: 1px solid rgba(20, 48, 56, 0.05);
+}
+
+.bmi-helper-note strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.bmi-helper-note p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.58;
 }
 
 .form-section {
@@ -507,6 +596,33 @@ h3 {
 .results-stack {
   display: grid;
   gap: 20px;
+}
+
+.result-banner {
+  display: flex;
+  justify-content: center;
+}
+
+.result-banner-chip {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(20, 48, 56, 0.08);
+}
+
+.result-banner-chip span {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.result-banner-chip strong {
+  font-size: 0.96rem;
 }
 
 .result-hero-card {
@@ -687,6 +803,26 @@ h3 {
   align-content: start;
 }
 
+.summary-highlight {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(20, 48, 56, 0.06);
+}
+
+.summary-highlight span {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.summary-highlight strong {
+  font-size: 1.52rem;
+  line-height: 1.2;
+}
+
 .summary-stat-list {
   display: grid;
   gap: 10px;
@@ -719,6 +855,12 @@ h3 {
 
 .visual-breakdown-2col {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sub-card-copy {
+  margin: -6px 0 14px;
+  color: var(--muted);
+  line-height: 1.6;
 }
 
 .attention-list,
@@ -811,6 +953,31 @@ h3 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.about-intro-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.mini-info-card {
+  display: grid;
+  gap: 8px;
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(20, 48, 56, 0.06);
+}
+
+.mini-info-card span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.mini-info-card strong {
+  font-size: 1rem;
+}
+
 .about-wide {
   grid-column: 1 / -1;
 }
@@ -826,10 +993,13 @@ h3 {
 }
 
 @media (max-width: 1100px) {
+  .home-quick-points,
+  .step-strip,
   .feature-band,
   .spotlight-grid,
   .result-hero-single,
   .visual-breakdown-2col,
+  .about-intro-grid,
   .about-grid {
     grid-template-columns: 1fr;
   }

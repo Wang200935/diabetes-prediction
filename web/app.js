@@ -331,6 +331,7 @@ function renderResultPage(result) {
 
   document.getElementById("predictedClass").textContent = result.result_summary;
   document.getElementById("resultRiskLevel").textContent = result.risk_level;
+  document.getElementById("resultPercentText").textContent = `${Math.round(result.risk_probability * 100)}%`;
   document.getElementById("disclaimerText").textContent = result.disclaimer;
 
   setRiskVisual(result.risk_probability, result.risk_level, result.risk_token);

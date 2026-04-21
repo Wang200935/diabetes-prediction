@@ -36,6 +36,13 @@
         </section>
 
         <section id="resultsPanel" class="results-stack hidden">
+          <section class="result-banner">
+            <div class="result-banner-chip">
+              <span>結果重點</span>
+              <strong>先看整體風險，再看需要注意的訊號</strong>
+            </div>
+          </section>
+
           <section class="card result-hero-card">
             <div class="result-hero result-hero-single">
               <div class="gauge-card prominent-gauge-card">
@@ -64,14 +71,18 @@
                     <h2>本次預測摘要</h2>
                   </div>
                 </div>
+                <div class="summary-highlight">
+                  <span>整體判定</span>
+                  <strong id="predictedClass">-</strong>
+                </div>
                 <div class="summary-stat-list">
-                  <div class="summary-stat">
-                    <span>預測結果</span>
-                    <strong id="predictedClass">-</strong>
-                  </div>
                   <div class="summary-stat">
                     <span>風險等級</span>
                     <strong id="resultRiskLevel">-</strong>
+                  </div>
+                  <div class="summary-stat">
+                    <span>風險百分比</span>
+                    <strong id="resultPercentText">-</strong>
                   </div>
                 </div>
                 <p id="disclaimerText" class="disclaimer-text"></p>
@@ -85,6 +96,7 @@
                 <p class="section-kicker">關鍵訊號</p>
                 <h3>需要留意的訊號</h3>
               </div>
+              <p class="sub-card-copy">這些是根據你填答內容整理出的重點，不代表正式醫療診斷。</p>
               <div id="attentionPoints" class="attention-list"></div>
             </div>
             <div class="sub-card">
@@ -92,6 +104,7 @@
                 <p class="section-kicker">建議方向</p>
                 <h3>建議你下一步怎麼做</h3>
               </div>
+              <p class="sub-card-copy">把結果當成提醒與行動方向，不要把它當成最後結論。</p>
               <div id="recommendations" class="recommendation-list"></div>
             </div>
           </section>
