@@ -40,6 +40,7 @@ class PredictionOutput(BaseModel):
     model_name: str
     model_version: str
     predicted_class: int
+    result_summary: str
     risk_probability: float
     risk_level: str
     risk_token: Literal["low", "medium", "elevated", "high"]
@@ -62,4 +63,3 @@ class ModelInfoOutput(BaseModel):
     threshold: float
     features: List[Dict[str, object]]
     disclaimer: str
-

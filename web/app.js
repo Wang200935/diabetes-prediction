@@ -175,13 +175,19 @@ function fillDemo() {
 }
 
 function setRiskVisual(probability, riskLevel, token) {
+  const gauge = document.getElementById("riskGauge");
+  const needle = document.getElementById("gaugeNeedle");
   const riskPercent = document.getElementById("riskPercent");
   const riskLevelElement = document.getElementById("riskLevel");
-  if (!riskPercent || !riskLevelElement) return;
+  if (!gauge || !needle || !riskPercent || !riskLevelElement) return;
 
   riskPercent.textContent = `${Math.round(probability * 100)}%`;
   riskLevelElement.textContent = riskLevel;
   riskLevelElement.dataset.tone = token;
+
+  const angle = -120 + (probability * 240);
+  needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+  gauge.dataset.tone = token;
 }
 
 function renderAttentionPoints(points) {
@@ -260,8 +266,7 @@ function renderResultPage(result) {
   panel.classList.remove("hidden");
   if (emptyState) emptyState.classList.add("hidden");
 
-  document.getElementById("predictedClass").textContent =
-    result.predicted_class === 1 ? "糖尿病風險偏高" : "糖尿病風險偏低";
+  document.getElementById("predictedClass").textContent = result.result_summary;
   document.getElementById("resultRiskLevel").textContent = result.risk_level;
   document.getElementById("disclaimerText").textContent = result.disclaimer;
 

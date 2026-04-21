@@ -456,6 +456,7 @@ h3 {
     );
   display: grid;
   place-items: center;
+  overflow: hidden;
 }
 
 .gauge::before {
@@ -466,9 +467,49 @@ h3 {
   background: rgba(255, 255, 255, 0.96);
 }
 
+.gauge-needle {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  width: 6px;
+  height: 108px;
+  transform: translateX(-50%) rotate(-120deg);
+  transform-origin: bottom center;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(20, 47, 55, 0.95) 0%, rgba(20, 47, 55, 0.55) 100%);
+  z-index: 1;
+  box-shadow: 0 4px 16px rgba(20, 47, 55, 0.16);
+}
+
+.gauge-needle::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: #143038;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.7);
+}
+
+.gauge-needle::after {
+  content: "";
+  position: absolute;
+  bottom: -9px;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: #143038;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.82);
+}
+
 .gauge-inner {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: grid;
   justify-items: center;
   gap: 8px;
@@ -528,9 +569,19 @@ h3 {
 .risk-legend span {
   text-align: center;
   border-radius: 999px;
-  padding: 8px 0;
+  padding: 8px 0 10px;
   font-size: 0.84rem;
   font-weight: 800;
+  line-height: 1.25;
+}
+
+.risk-legend span em {
+  display: block;
+  margin-top: 4px;
+  font-style: normal;
+  font-size: 0.72rem;
+  font-weight: 700;
+  opacity: 0.7;
 }
 
 .risk-legend [data-tone="low"] { background: rgba(119, 192, 161, 0.2); }

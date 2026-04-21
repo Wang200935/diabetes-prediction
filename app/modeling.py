@@ -7,7 +7,14 @@ import numpy as np
 import pandas as pd
 
 from app.config import FEATURE_SCHEMA_PATH, MODEL_BUNDLE_PATH, MODEL_METADATA_PATH
-from app.domain import FEATURE_ORDER, FEATURE_LABELS, build_feature_schema_payload, classify_risk, humanize_value
+from app.domain import (
+    FEATURE_ORDER,
+    FEATURE_LABELS,
+    build_feature_schema_payload,
+    build_summary_label,
+    classify_risk,
+    humanize_value,
+)
 from app.recommendations import build_attention_points, build_recommendations
 from app.schemas import PredictionInput
 
@@ -90,6 +97,7 @@ def predict_payload(payload: PredictionInput) -> Dict[str, object]:
         "model_name": metadata.get("model_name", "未命名模型"),
         "model_version": metadata.get("model_version", "dev"),
         "predicted_class": predicted_class,
+        "result_summary": build_summary_label(risk["token"]),
         "risk_probability": round(probability, 4),
         "risk_level": risk["label"],
         "risk_token": risk["token"],

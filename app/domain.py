@@ -143,8 +143,8 @@ FEATURE_SCHEMA = {
 }
 
 RISK_BANDS: List[Tuple[float, str, str]] = [
-    (0.10, "低風險", "low"),
-    (0.30, "中等風險", "medium"),
+    (0.15, "低風險", "low"),
+    (0.35, "中等風險", "medium"),
     (0.60, "偏高風險", "elevated"),
     (1.01, "高風險", "high"),
 ]
@@ -155,6 +155,16 @@ def classify_risk(probability: float) -> Dict[str, str]:
         if probability < upper_bound:
             return {"label": label, "token": token}
     return {"label": "高風險", "token": "high"}
+
+
+def build_summary_label(risk_token: str) -> str:
+    mapping = {
+        "low": "糖尿病風險偏低",
+        "medium": "糖尿病風險中等",
+        "elevated": "糖尿病風險偏高",
+        "high": "糖尿病風險很高",
+    }
+    return mapping.get(risk_token, "糖尿病風險需要留意")
 
 
 def humanize_value(feature_name: str, value: float) -> str:

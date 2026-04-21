@@ -40,6 +40,7 @@
             <div class="result-hero result-hero-single">
               <div class="gauge-card prominent-gauge-card">
                 <div class="gauge" id="riskGauge">
+                  <div class="gauge-needle" id="gaugeNeedle"></div>
                   <div class="gauge-inner">
                     <span class="gauge-caption">風險機率</span>
                     <strong id="riskPercent">0%</strong>
@@ -47,10 +48,10 @@
                   </div>
                 </div>
                 <div class="risk-legend">
-                  <span data-tone="low">低</span>
-                  <span data-tone="medium">中</span>
-                  <span data-tone="elevated">偏高</span>
-                  <span data-tone="high">高</span>
+                  <span data-tone="low">低<br><em>0-14%</em></span>
+                  <span data-tone="medium">中<br><em>15-34%</em></span>
+                  <span data-tone="elevated">偏高<br><em>35-59%</em></span>
+                  <span data-tone="high">高<br><em>60%+</em></span>
                 </div>
               </div>
 
@@ -78,14 +79,14 @@
           <section class="visual-breakdown visual-breakdown-2col">
             <div class="sub-card">
               <div class="sub-card-head">
-                <p class="section-kicker">Signals</p>
+                <p class="section-kicker">關鍵訊號</p>
                 <h3>需要留意的訊號</h3>
               </div>
               <div id="attentionPoints" class="attention-list"></div>
             </div>
             <div class="sub-card">
               <div class="sub-card-head">
-                <p class="section-kicker">Actions</p>
+                <p class="section-kicker">建議方向</p>
                 <h3>建議你下一步怎麼做</h3>
               </div>
               <div id="recommendations" class="recommendation-list"></div>
@@ -94,7 +95,7 @@
 
           <section class="sub-card">
             <div class="sub-card-head">
-              <p class="section-kicker">Input Snapshot</p>
+              <p class="section-kicker">填答摘要</p>
               <h3>這次填答摘要</h3>
             </div>
             <div id="inputSummary" class="summary-grid"></div>
