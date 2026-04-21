@@ -1,62 +1,155 @@
-# diabetes-prediction
+# 糖尿病風險評估中心
 
-This repository now includes:
+這個專案是一個可部署的糖尿病風險評估網站，提供：
 
-- the original notebook-based research workflow
-- a reproducible training/export script
-- a deployable FastAPI inference backend
-- a browser-based questionnaire UI with risk visualization and recommendation cards
+- 問答式健康資料蒐集
+- 風險推估 API
+- 前端結果頁、風險視覺化、建議卡片
+- 模型 artifact 管理
+- Raspberry Pi + Cloudflare Tunnel + 自己網域部署範本
+- 開發文檔與維護文檔
 
-## Project layout
+這個 repo 的目標不是只有在本機 demo，而是整理成可以持續維護、可更新模型、可部署到樹莓派的實際專案。
 
-- `diabetes-prediction-eda-preprocessing-models.ipynb`: research notebook
-- `scripts/train_and_export.py`: retrain the final deployable model and export artifacts
-- `scripts/smoke_test.py`: quick end-to-end inference smoke test
-- `app/main.py`: FastAPI entrypoint
-- `web/`: frontend assets served by FastAPI
-- `deploy/raspberry_pi/`: Raspberry Pi + Cloudflare Tunnel deployment templates
-- `docs/development_guide.md`: 開發文檔
-- `docs/maintenance_guide.md`: 維護文檔
+## 專案結構
 
-## Quick start
+```text
+app/                        FastAPI 服務與推論邏輯
+artifacts/                  已匯出的模型與 metadata
+deploy/raspberry_pi/        樹莓派與 Cloudflare Tunnel 部署範本
+docs/                       開發與維護文件
+scripts/                    訓練、檢查、部署、更新腳本
+web/                        前端頁面與靜態資源
+security_audit_output/      安全與效能測試輸出
+```
 
-1. Install dependencies:
+## 功能概覽
+
+### 前端頁面
+- `/`：首頁
+- `/assessment`：問答頁
+- `/result`：結果頁
+- `/about`：模型說明頁
+
+### API
+- `GET /health`
+- `POST /api/predict`
+
+### 問答特色
+- BMI 小工具
+- 實際年齡輸入，後端自動轉成模型 bucket
+- 多頁式體驗，不把首頁、問答、結果混在同一頁
+
+## 本機開發
+
+### 1. 安裝依賴
 
 ```bash
+cd /Users/wang/文件/健康專題
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-2. Export the deployable model bundle:
+### 2. 重新產出模型
 
 ```bash
 python scripts/train_and_export.py
 ```
 
-3. Run the API and website:
+### 3. 啟動網站
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-4. Open:
+### 4. 打開網站
 
 ```text
 http://127.0.0.1:8000
 ```
 
-## API
+## 模型與 artifact
 
-- `GET /health`
-- `POST /api/predict`
+主要檔案：
 
-## Operations docs
+- `artifacts/model_bundle.joblib`
+- `artifacts/model_metadata.json`
+- `artifacts/feature_schema.json`
 
-- [docs/development_guide.md](./docs/development_guide.md)
-- [docs/maintenance_guide.md](./docs/maintenance_guide.md)
-- [deploy/raspberry_pi/DEPLOY_RPI_CLOUDFLARE.md](./deploy/raspberry_pi/DEPLOY_RPI_CLOUDFLARE.md)
+重訓後要確認：
 
-## Notes
+1. artifact 有更新
+2. `/api/predict` 正常
+3. 結果頁顯示合理
+4. `result_summary` 和 `risk_level` 不矛盾
 
-- The training script prefers the local dataset directory `/Users/wang/Downloads/archive`.
-- If the local file is not found, it falls back to `kagglehub`.
-- The deployable training flow compares multiple candidates and keeps the highest-accuracy calibrated model artifact.
+## 開發與維護文件
+
+- [開發文檔](./docs/development_guide.md)
+- [維護文檔](./docs/maintenance_guide.md)
+- [樹莓派 + Cloudflare Tunnel 部署說明](./deploy/raspberry_pi/DEPLOY_RPI_CLOUDFLARE.md)
+
+## Raspberry Pi + Cloudflare Tunnel
+
+這個專案已經準備好樹莓派部署所需的：
+
+- `.env.example`
+- app systemd service
+- cloudflared systemd service
+- cloudflared 設定範本
+- bootstrap / install / update / check 腳本
+
+相關檔案：
+
+- `deploy/raspberry_pi/health-project.service`
+- `deploy/raspberry_pi/cloudflared-health-project.service`
+- `deploy/raspberry_pi/cloudflared-config.yml.example`
+- `scripts/bootstrap_rpi.sh`
+- `scripts/install_rpi_services.sh`
+- `scripts/update_rpi_app.sh`
+- `scripts/check_rpi_services.sh`
+
+## 安全與效能
+
+專案內已保留最近一次本機安全與效能檢查輸出：
+
+- `security_audit_output/report.md`
+- `security_audit_output/findings.json`
+- `security_audit_output/repro_steps.md`
+- `security_audit_output/perf_summary.md`
+
+如果你有改：
+- CORS
+- 安全標頭
+- `/api/predict` 限流/併發
+- schema 驗證
+
+建議重新跑：
+
+```bash
+python security_audit_output/artifacts/run_security_checks.py
+python security_audit_output/artifacts/run_perf_tests.py
+```
+
+## 注意事項
+
+- `scripts/train_and_export.py` 會優先找本機資料集目錄
+- 若找不到才會退回 `kagglehub`
+- 目前 deployable 模型會比較候選模型後，自動選 accuracy 較高者
+- 如果你之後更動模型特徵、risk bands、輸入欄位，請同步更新：
+  - `app/domain.py`
+  - `app/schemas.py`
+  - `app/modeling.py`
+  - `web/app.js`
+
+## 維護原則
+
+這個專案的設計重點是：
+
+- 本機開發方便
+- 上線後容易維護
+- 模型可替換
+- 部署步驟固定
+- 問題發生時能快速看 log 與重啟服務
+
+如果只是能跑但不好維護，這個 repo 的目的就沒有達成。
