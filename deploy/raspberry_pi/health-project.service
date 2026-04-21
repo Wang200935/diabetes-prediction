@@ -1,0 +1,23 @@
+[Unit]
+Description=Health Project FastAPI Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/opt/health-project/app
+EnvironmentFile=/opt/health-project/shared/.env
+ExecStart=/opt/health-project/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+KillSignal=SIGINT
+
+# Logging
+StandardOutput=append:/opt/health-project/logs/app.log
+StandardError=append:/opt/health-project/logs/app-error.log
+
+[Install]
+WantedBy=multi-user.target

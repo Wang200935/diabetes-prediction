@@ -14,6 +14,9 @@ This repository now includes:
 - `scripts/smoke_test.py`: quick end-to-end inference smoke test
 - `app/main.py`: FastAPI entrypoint
 - `web/`: frontend assets served by FastAPI
+- `deploy/raspberry_pi/`: Raspberry Pi + Cloudflare Tunnel deployment templates
+- `docs/development_guide.md`: 開發文檔
+- `docs/maintenance_guide.md`: 維護文檔
 
 ## Quick start
 
@@ -44,11 +47,16 @@ http://127.0.0.1:8000
 ## API
 
 - `GET /health`
-- `GET /api/model-info`
 - `POST /api/predict`
+
+## Operations docs
+
+- [docs/development_guide.md](./docs/development_guide.md)
+- [docs/maintenance_guide.md](./docs/maintenance_guide.md)
+- [deploy/raspberry_pi/DEPLOY_RPI_CLOUDFLARE.md](./deploy/raspberry_pi/DEPLOY_RPI_CLOUDFLARE.md)
 
 ## Notes
 
 - The training script prefers the local dataset directory `/Users/wang/Downloads/archive`.
 - If the local file is not found, it falls back to `kagglehub`.
-- The deployable training flow prefers `XGBoost`, but falls back to `HistGradientBoosting` if XGBoost is unavailable in the environment.
+- The deployable training flow compares multiple candidates and keeps the highest-accuracy calibrated model artifact.

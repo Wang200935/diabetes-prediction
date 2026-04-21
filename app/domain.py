@@ -1,9 +1,10 @@
+import os
 from typing import Dict, List, Tuple
 
 
 DATASET_ID = "alexteboul/diabetes-health-indicators-dataset"
 CSV_NAME = "diabetes_binary_health_indicators_BRFSS2015.csv"
-LOCAL_DATASET_DIR = "/Users/wang/Downloads/archive"
+LOCAL_DATASET_DIR = os.getenv("LOCAL_DATASET_DIR", "/Users/wang/Downloads/archive")
 
 FEATURE_ORDER = [
     "HighBP",

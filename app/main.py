@@ -9,71 +9,61 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.config import WEB_DIR
+from app.config import (
+    ALLOWED_HOSTS,
+    ALLOWED_ORIGINS,
+    ALLOW_CREDENTIALS,
+    APP_SUMMARY,
+    APP_TITLE,
+    APP_VERSION,
+    DOCS_URL,
+    OPENAPI_URL,
+    PREDICTION_CACHE_CONTROL,
+    PREDICTION_PRAGMA,
+    PREDICT_ACQUIRE_TIMEOUT_SECONDS,
+    PREDICT_CONCURRENCY_LIMIT,
+    PREDICT_EXEC_TIMEOUT_SECONDS,
+    PREDICT_RATE_LIMIT_MAX_REQUESTS,
+    PREDICT_RATE_LIMIT_WINDOW_SECONDS,
+    REDOC_URL,
+    SECURITY_HEADERS,
+    WEB_DIR,
+)
 from app.modeling import load_model_metadata, predict_payload
 from app.schemas import HealthOutput, PredictionInput, PredictionOutput
 
 
 app = FastAPI(
-    title="Diabetes Risk Predictor",
-    version="1.0.0",
-    summary="Notebook-derived diabetes risk inference backend with a visual website.",
-    docs_url=None,
-    redoc_url=None,
-    openapi_url=None,
+    title=APP_TITLE,
+    version=APP_VERSION,
+    summary=APP_SUMMARY,
+    docs_url=DOCS_URL,
+    redoc_url=REDOC_URL,
+    openapi_url=OPENAPI_URL,
 )
-
-ALLOWED_ORIGINS = {
-    "http://127.0.0.1:8000",
-    "http://localhost:8000",
-}
-PREDICT_CONCURRENCY_LIMIT = 4
-PREDICT_ACQUIRE_TIMEOUT_SECONDS = 0.25
-PREDICT_EXEC_TIMEOUT_SECONDS = 8
-PREDICT_RATE_LIMIT_WINDOW_SECONDS = 60
-PREDICT_RATE_LIMIT_MAX_REQUESTS = 600
 _predict_semaphore = asyncio.Semaphore(PREDICT_CONCURRENCY_LIMIT)
 _predict_ip_windows = defaultdict(deque)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=sorted(ALLOWED_ORIGINS),
-    allow_credentials=False,
+    allow_credentials=ALLOW_CREDENTIALS,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type"],
 )
 app.add_middleware(
     TrustedHostMiddleware,
-    allowed_hosts=["127.0.0.1", "localhost"],
+    allowed_hosts=ALLOWED_HOSTS,
 )
 
 app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
 
 
 def _security_headers(path: str) -> dict:
-    headers = {
-        "Content-Security-Policy": (
-            "default-src 'self'; "
-            "script-src 'self'; "
-            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-            "font-src 'self' https://fonts.gstatic.com data:; "
-            "img-src 'self' data:; "
-            "connect-src 'self'; "
-            "object-src 'none'; "
-            "base-uri 'self'; "
-            "form-action 'self'; "
-            "frame-ancestors 'none'"
-        ),
-        "X-Content-Type-Options": "nosniff",
-        "X-Frame-Options": "DENY",
-        "Referrer-Policy": "no-referrer",
-        "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-        "Cross-Origin-Opener-Policy": "same-origin",
-        "Cross-Origin-Resource-Policy": "same-origin",
-    }
+    headers = dict(SECURITY_HEADERS)
     if path.startswith("/api/") or path in {"/result", "/assessment", "/about", "/"}:
-        headers["Cache-Control"] = "no-store, max-age=0"
-        headers["Pragma"] = "no-cache"
+        headers["Cache-Control"] = PREDICTION_CACHE_CONTROL
+        headers["Pragma"] = PREDICTION_PRAGMA
     return headers
 
 

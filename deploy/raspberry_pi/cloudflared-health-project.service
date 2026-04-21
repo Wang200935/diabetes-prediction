@@ -1,0 +1,18 @@
+[Unit]
+Description=Cloudflare Tunnel for Health Project
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+ExecStart=/usr/local/bin/cloudflared tunnel --config /etc/cloudflared/health-project.yml run
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+StandardOutput=append:/opt/health-project/logs/cloudflared.log
+StandardError=append:/opt/health-project/logs/cloudflared-error.log
+
+[Install]
+WantedBy=multi-user.target
