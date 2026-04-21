@@ -291,7 +291,7 @@ async function renderAboutPage() {
     const info = await response.json();
 
     const items = [
-      `此網站目前使用 ${info.model_name} 作為風險推估核心。`,
+      "這個網站會根據你的填答內容，估算目前的糖尿病風險。",
       `問答欄位來自健康指標、生活習慣與自評健康狀況。`,
       `結果頁會把預測分數轉成一般人比較容易理解的風險分級與建議。`,
     ];
