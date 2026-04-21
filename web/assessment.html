@@ -26,7 +26,6 @@
 
       <main class="page page-assessment">
         <section class="page-intro">
-          <p class="eyebrow">Assessment</p>
           <h1>填答你的健康狀況</h1>
           <p>
             問答結束後會直接跳到結果頁，不會把問卷和結果硬塞在同一頁。這樣閱讀動線會更清楚，也比較像真正給一般使用者使用的網站。
@@ -61,11 +60,14 @@
               </div>
             </div>
             <div class="bmi-output">
-              <div>
+              <div class="bmi-output-main">
                 <span>BMI 計算結果</span>
                 <strong id="bmiCalculatedValue">--</strong>
               </div>
-              <p id="bmiCalculatedHint">輸入身高與體重後，系統會自動算出 BMI。</p>
+              <div class="bmi-output-meta">
+                <span id="bmiCalculatedBadge" class="bmi-badge neutral">等待輸入</span>
+                <p id="bmiCalculatedHint">輸入身高與體重後，系統會自動算出 BMI。</p>
+              </div>
             </div>
           </section>
 

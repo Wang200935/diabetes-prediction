@@ -89,6 +89,13 @@ function getBmiLevel(value) {
   return "重度肥胖";
 }
 
+function getBmiTone(value) {
+  if (value < 18.5) return "watch";
+  if (value < 24) return "good";
+  if (value < 27) return "watch";
+  return "risk";
+}
+
 function createField(field) {
   const wrapper = document.createElement("div");
   wrapper.className = "field";
@@ -135,20 +142,27 @@ function updateBmiHelper() {
   const weightInput = document.getElementById("bmiWeight");
   const bmiValue = document.getElementById("bmiCalculatedValue");
   const bmiHint = document.getElementById("bmiCalculatedHint");
+  const bmiBadge = document.getElementById("bmiCalculatedBadge");
 
-  if (!heightInput || !weightInput || !bmiValue || !bmiHint) return;
+  if (!heightInput || !weightInput || !bmiValue || !bmiHint || !bmiBadge) return;
 
   const height = Number(heightInput.value);
   const weight = Number(weightInput.value);
   if (!height || !weight || height <= 0 || weight <= 0) {
     bmiValue.textContent = "--";
     bmiHint.textContent = "輸入身高與體重後，系統會自動算出 BMI。";
+    bmiBadge.textContent = "等待輸入";
+    bmiBadge.className = "bmi-badge neutral";
     return;
   }
 
   const bmi = weight / ((height / 100) ** 2);
+  const level = getBmiLevel(bmi);
+  const tone = getBmiTone(bmi);
   bmiValue.textContent = bmi.toFixed(1);
-  bmiHint.textContent = `目前屬於「${getBmiLevel(bmi)}」區間。`;
+  bmiHint.textContent = `目前屬於「${level}」區間。你可以先把這個結果帶入問卷，再繼續做風險評估。`;
+  bmiBadge.textContent = level;
+  bmiBadge.className = `bmi-badge ${tone}`;
 }
 
 function initBmiHelper() {
