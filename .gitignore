@@ -3,3 +3,4 @@ __pycache__/
 .venv/
 .venv-notebook/
 security_audit_output/
+.DS_Store

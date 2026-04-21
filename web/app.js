@@ -340,30 +340,23 @@ function renderResultPage(result) {
   renderInputSummary(result.input_summary);
 }
 
-async function renderAboutPage() {
+function renderAboutPage() {
   const container = document.getElementById("aboutModelInfo");
   if (!container) return;
 
-  try {
-    const response = await fetch("/api/model-info");
-    const info = await response.json();
+  const items = [
+    "系統會把你填寫的健康與生活習慣資料整理後，再交給風險模型做判斷。",
+    "模型只用來估算風險高低，不能直接當成醫療診斷結果。",
+    "結果頁會把分數轉成比較容易理解的風險等級、提醒訊號與下一步建議。",
+  ];
 
-    const items = [
-      "這個網站會根據你的填答內容，估算目前的糖尿病風險。",
-      `問答欄位來自健康指標、生活習慣與自評健康狀況。`,
-      `結果頁會把預測分數轉成一般人比較容易理解的風險分級與建議。`,
-    ];
-
-    container.innerHTML = "";
-    items.forEach((text) => {
-      const item = document.createElement("div");
-      item.className = "about-note";
-      item.innerHTML = `<p>${text}</p>`;
-      container.appendChild(item);
-    });
-  } catch (_error) {
-    container.innerHTML = `<div class="about-note"><p>模型說明目前無法載入，請稍後再試。</p></div>`;
-  }
+  container.innerHTML = "";
+  items.forEach((text) => {
+    const item = document.createElement("div");
+    item.className = "about-note";
+    item.innerHTML = `<p>${text}</p>`;
+    container.appendChild(item);
+  });
 }
 
 function initAssessmentPage() {

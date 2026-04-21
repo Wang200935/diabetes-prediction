@@ -1,9 +1,11 @@
 from typing import Dict, List, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class PredictionInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     HighBP: int = Field(ge=0, le=1)
     HighChol: int = Field(ge=0, le=1)
     BMI: float = Field(ge=10, le=80)
@@ -37,14 +39,11 @@ class Recommendation(BaseModel):
 
 
 class PredictionOutput(BaseModel):
-    model_name: str
-    model_version: str
     predicted_class: int
     result_summary: str
     risk_probability: float
     risk_level: str
     risk_token: Literal["low", "medium", "elevated", "high"]
-    threshold: float
     disclaimer: str
     input_summary: Dict[str, str]
     attention_points: List[AttentionPoint]
@@ -54,12 +53,3 @@ class PredictionOutput(BaseModel):
 class HealthOutput(BaseModel):
     status: str
     model_loaded: bool
-    model_version: str
-
-
-class ModelInfoOutput(BaseModel):
-    model_name: str
-    model_version: str
-    threshold: float
-    features: List[Dict[str, object]]
-    disclaimer: str
