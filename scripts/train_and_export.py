@@ -6,10 +6,11 @@ from pathlib import Path
 
 import joblib
 import pandas as pd
-from imblearn.under_sampling import NearMiss
 from kagglehub import dataset_download
-from sklearn.ensemble import HistGradientBoostingClassifier
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, brier_score_loss, f1_score, precision_score, recall_score, roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
@@ -45,20 +46,134 @@ def resolve_data_path() -> Path:
     raise FileNotFoundError(f"Unable to find dataset file {CSV_NAME}")
 
 
-def select_model():
-    try:
-        from xgboost import XGBClassifier
-
-        return (
-            XGBClassifier(
-                eval_metric="error",
-                learning_rate=0.1,
+def build_candidate_models():
+    candidates = [
+        (
+            "CalibratedLogisticRegression",
+            LogisticRegression(
+                max_iter=4000,
+                class_weight="balanced",
                 random_state=42,
             ),
-            "XGBoost",
-        )
-    except Exception:
-        return HistGradientBoostingClassifier(random_state=42), "HistGradientBoosting"
+            True,
+        ),
+        (
+            "CalibratedRandomForest",
+            RandomForestClassifier(
+                n_estimators=320,
+                max_depth=10,
+                min_samples_leaf=8,
+                class_weight="balanced_subsample",
+                random_state=42,
+                n_jobs=-1,
+            ),
+            False,
+        ),
+    ]
+    return candidates
+
+
+def evaluate_candidate(model_name, estimator, use_scaler, X_train, y_train, X_test, y_test):
+    scaler = StandardScaler() if use_scaler else None
+    if scaler is not None:
+        X_train_ready = scaler.fit_transform(X_train)
+        X_test_ready = scaler.transform(X_test)
+    else:
+        X_train_ready = X_train.to_numpy()
+        X_test_ready = X_test.to_numpy()
+
+    calibrated_model = CalibratedClassifierCV(estimator=estimator, method="sigmoid", cv=5)
+    calibrated_model.fit(X_train_ready, y_train)
+
+    y_prob = calibrated_model.predict_proba(X_test_ready)[:, 1]
+    y_pred = (y_prob >= 0.5).astype(int)
+
+    metrics = {
+        "accuracy": round(float(accuracy_score(y_test, y_pred)), 4),
+        "precision": round(float(precision_score(y_test, y_pred)), 4),
+        "recall": round(float(recall_score(y_test, y_pred)), 4),
+        "f1": round(float(f1_score(y_test, y_pred)), 4),
+        "roc_auc": round(float(roc_auc_score(y_test, y_prob)), 4),
+        "brier_score": round(float(brier_score_loss(y_test, y_prob)), 4),
+    }
+
+    return {
+        "model_name": model_name,
+        "model": calibrated_model,
+        "scaler": scaler,
+        "metrics": metrics,
+        "test_probability": y_prob,
+        "test_prediction": y_pred,
+    }
+
+
+def build_sanity_examples():
+    return {
+        "low": {
+            "HighBP": 0,
+            "HighChol": 0,
+            "BMI": 20,
+            "Smoker": 0,
+            "Stroke": 0,
+            "HeartDiseaseorAttack": 0,
+            "PhysActivity": 1,
+            "HvyAlcoholConsump": 0,
+            "NoDocbcCost": 0,
+            "GenHlth": 1,
+            "MentHlth": 0,
+            "PhysHlth": 0,
+            "DiffWalk": 0,
+            "Age": 1,
+            "Education": 6,
+            "Income": 8,
+        },
+        "mid": {
+            "HighBP": 0,
+            "HighChol": 1,
+            "BMI": 25,
+            "Smoker": 0,
+            "Stroke": 0,
+            "HeartDiseaseorAttack": 0,
+            "PhysActivity": 1,
+            "HvyAlcoholConsump": 0,
+            "NoDocbcCost": 0,
+            "GenHlth": 3,
+            "MentHlth": 3,
+            "PhysHlth": 3,
+            "DiffWalk": 0,
+            "Age": 7,
+            "Education": 4,
+            "Income": 5,
+        },
+        "high": {
+            "HighBP": 1,
+            "HighChol": 1,
+            "BMI": 35,
+            "Smoker": 1,
+            "Stroke": 1,
+            "HeartDiseaseorAttack": 1,
+            "PhysActivity": 0,
+            "HvyAlcoholConsump": 1,
+            "NoDocbcCost": 1,
+            "GenHlth": 5,
+            "MentHlth": 20,
+            "PhysHlth": 20,
+            "DiffWalk": 1,
+            "Age": 13,
+            "Education": 1,
+            "Income": 1,
+        },
+    }
+
+
+def predict_examples(calibrated_model, scaler, examples):
+    example_df = pd.DataFrame(examples.values(), index=examples.keys(), columns=FEATURE_ORDER)
+    if scaler is not None:
+        features = scaler.transform(example_df)
+    else:
+        features = example_df.to_numpy()
+    probs = calibrated_model.predict_proba(features)[:, 1]
+    return {name: round(float(prob), 4) for name, prob in zip(example_df.index, probs)}
 
 
 def main() -> int:
@@ -69,56 +184,57 @@ def main() -> int:
     X = working_df[FEATURE_ORDER].copy()
     y = working_df["Diabetes_binary"].astype(int).copy()
 
-    sampler = NearMiss(version=1, n_neighbors=10)
-    x_sampled, y_sampled = sampler.fit_resample(X, y)
-
     X_train, X_test, y_train, y_test = train_test_split(
-        x_sampled,
-        y_sampled,
-        test_size=0.3,
+        X,
+        y,
+        test_size=0.2,
         random_state=42,
-        stratify=y_sampled,
+        stratify=y,
     )
 
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
+    candidate_results = [
+        evaluate_candidate(name, estimator, use_scaler, X_train, y_train, X_test, y_test)
+        for name, estimator, use_scaler in build_candidate_models()
+    ]
+    candidate_results_by_name = {candidate["model_name"]: candidate for candidate in candidate_results}
+    best = candidate_results_by_name["CalibratedLogisticRegression"]
 
-    model, model_name = select_model()
-    model.fit(X_train_scaled, y_train)
-
-    y_pred = model.predict(X_test_scaled)
-    if hasattr(model, "predict_proba"):
-        y_prob = model.predict_proba(X_test_scaled)[:, 1]
-    else:
-        y_prob = y_pred.astype(float)
-
-    metrics = {
-        "accuracy": round(float(accuracy_score(y_test, y_pred)), 4),
-        "precision": round(float(precision_score(y_test, y_pred)), 4),
-        "recall": round(float(recall_score(y_test, y_pred)), 4),
-        "f1": round(float(f1_score(y_test, y_pred)), 4),
-        "roc_auc": round(float(roc_auc_score(y_test, y_prob)), 4),
-    }
+    example_probs = predict_examples(best["model"], best["scaler"], build_sanity_examples())
 
     model_version = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
 
     ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
     metadata = {
-        "model_name": model_name,
+        "model_name": best["model_name"],
         "model_version": model_version,
         "threshold": 0.5,
         "dataset_path": str(data_path),
         "dataset_id": DATASET_ID,
         "csv_name": CSV_NAME,
         "feature_order": FEATURE_ORDER,
-        "metrics": metrics,
+        "metrics": best["metrics"],
+        "candidate_metrics": [
+            {
+                "model_name": candidate["model_name"],
+                **candidate["metrics"],
+            }
+            for candidate in candidate_results
+        ],
+        "class_distribution": {
+            "negative": int((y == 0).sum()),
+            "positive": int((y == 1).sum()),
+        },
+        "calibration": {
+            "method": "sigmoid",
+            "cv": 5,
+        },
+        "sanity_examples": example_probs,
         "disclaimer": "此結果僅供風險評估與健康教育參考，不能替代醫師診斷。",
     }
 
     bundle = {
-        "model": model,
-        "scaler": scaler,
+        "model": best["model"],
+        "scaler": best["scaler"],
         "feature_order": FEATURE_ORDER,
         "metadata": metadata,
     }

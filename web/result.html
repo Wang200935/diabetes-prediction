@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>評估結果 | 糖尿病風險評估中心</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Sora:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body data-page="result">
+    <div class="site-bg"></div>
+    <div class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/">糖尿病風險評估中心</a>
+        <nav class="nav">
+          <a href="/">首頁</a>
+          <a href="/assessment">開始評估</a>
+          <a href="/about">關於模型</a>
+        </nav>
+      </header>
+
+      <main class="page page-result">
+        <section class="page-intro">
+          <p class="eyebrow">Result</p>
+          <h1>你的風險結果</h1>
+          <p>這一頁只專心顯示結果與建議，不再和問卷混在同一個視窗裡。</p>
+        </section>
+
+        <section id="emptyState" class="card empty-state hidden">
+          <h2>目前還沒有評估結果</h2>
+          <p>請先完成健康問答，再回到這裡查看風險視覺化結果。</p>
+          <a class="primary-button" href="/assessment">前往開始評估</a>
+        </section>
+
+        <section id="resultsPanel" class="results-stack hidden">
+          <section class="card result-hero-card">
+            <div class="result-hero result-hero-single">
+              <div class="gauge-card prominent-gauge-card">
+                <div class="gauge" id="riskGauge">
+                  <div class="gauge-inner">
+                    <span class="gauge-caption">風險機率</span>
+                    <strong id="riskPercent">0%</strong>
+                    <span id="riskLevel" class="risk-level">等待分析</span>
+                  </div>
+                </div>
+                <div class="risk-legend">
+                  <span data-tone="low">低</span>
+                  <span data-tone="medium">中</span>
+                  <span data-tone="elevated">偏高</span>
+                  <span data-tone="high">高</span>
+                </div>
+              </div>
+
+              <div class="summary-card summary-card-large">
+                <div class="summary-header">
+                  <div>
+                    <p class="section-kicker">Summary</p>
+                    <h2>本次預測摘要</h2>
+                  </div>
+                </div>
+                <div class="summary-stat-list">
+                  <div class="summary-stat">
+                    <span>預測結果</span>
+                    <strong id="predictedClass">-</strong>
+                  </div>
+                  <div class="summary-stat">
+                    <span>風險等級</span>
+                    <strong id="resultRiskLevel">-</strong>
+                  </div>
+                  <div class="summary-stat">
+                    <span>機率門檻</span>
+                    <strong id="resultThreshold">-</strong>
+                  </div>
+                </div>
+                <p id="disclaimerText" class="disclaimer-text"></p>
+              </div>
+            </div>
+          </section>
+
+          <section class="visual-breakdown visual-breakdown-2col">
+            <div class="sub-card">
+              <div class="sub-card-head">
+                <p class="section-kicker">Signals</p>
+                <h3>需要留意的訊號</h3>
+              </div>
+              <div id="attentionPoints" class="attention-list"></div>
+            </div>
+            <div class="sub-card">
+              <div class="sub-card-head">
+                <p class="section-kicker">Actions</p>
+                <h3>建議你下一步怎麼做</h3>
+              </div>
+              <div id="recommendations" class="recommendation-list"></div>
+            </div>
+          </section>
+
+          <section class="sub-card">
+            <div class="sub-card-head">
+              <p class="section-kicker">Input Snapshot</p>
+              <h3>這次填答摘要</h3>
+            </div>
+            <div id="inputSummary" class="summary-grid"></div>
+          </section>
+
+          <div class="result-actions">
+            <a class="secondary-button" href="/assessment">重新填答</a>
+            <a class="ghost-button" href="/about">看模型說明</a>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

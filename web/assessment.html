@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>開始評估 | 糖尿病風險評估中心</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Sora:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body data-page="assessment">
+    <div class="site-bg"></div>
+    <div class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/">糖尿病風險評估中心</a>
+        <nav class="nav">
+          <a href="/">首頁</a>
+          <a href="/assessment" class="active">開始評估</a>
+          <a href="/about">關於模型</a>
+        </nav>
+      </header>
+
+      <main class="page page-assessment">
+        <section class="page-intro">
+          <p class="eyebrow">Assessment</p>
+          <h1>填答你的健康狀況</h1>
+          <p>
+            問答結束後會直接跳到結果頁，不會把問卷和結果硬塞在同一頁。這樣閱讀動線會更清楚，也比較像真正給一般使用者使用的網站。
+          </p>
+        </section>
+
+        <section class="card questionnaire-card wide-card">
+          <div class="card-head">
+            <div>
+              <p class="section-kicker">Questionnaire</p>
+              <h2>健康問答</h2>
+            </div>
+            <p class="section-note">所有欄位都會在送出前做格式檢查。</p>
+          </div>
+          <form id="predictionForm" class="questionnaire-form">
+            <div id="questionnaireSections" class="questionnaire-sections"></div>
+            <div class="form-actions">
+              <button type="submit" class="primary-button">送出並查看結果</button>
+              <button type="button" id="fillDemo" class="secondary-button">填入示範資料</button>
+            </div>
+            <p id="formError" class="form-error" aria-live="polite"></p>
+          </form>
+        </section>
+      </main>
+    </div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

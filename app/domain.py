@@ -143,9 +143,9 @@ FEATURE_SCHEMA = {
 }
 
 RISK_BANDS: List[Tuple[float, str, str]] = [
-    (0.25, "低風險", "low"),
-    (0.50, "中等風險", "medium"),
-    (0.75, "偏高風險", "elevated"),
+    (0.05, "低風險", "low"),
+    (0.20, "中等風險", "medium"),
+    (0.45, "偏高風險", "elevated"),
     (1.01, "高風險", "high"),
 ]
 
@@ -189,4 +189,3 @@ def build_feature_schema_payload() -> List[Dict[str, object]]:
             }
         )
     return payload
-

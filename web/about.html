@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>關於模型 | 糖尿病風險評估中心</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Sora:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body data-page="about">
+    <div class="site-bg"></div>
+    <div class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/">糖尿病風險評估中心</a>
+        <nav class="nav">
+          <a href="/">首頁</a>
+          <a href="/assessment">開始評估</a>
+          <a href="/about" class="active">關於模型</a>
+        </nav>
+      </header>
+
+      <main class="page page-about">
+        <section class="page-intro">
+          <p class="eyebrow">About</p>
+          <h1>這個網站怎麼做出風險評估</h1>
+          <p>
+            這個頁面提供一般使用者可理解的說明，而不是把模型名稱、版本號、開發資訊放在首頁最顯眼的位置。
+          </p>
+        </section>
+
+        <section class="about-grid">
+          <article class="sub-card">
+            <p class="section-kicker">資料與模型</p>
+            <h2>預測方式</h2>
+            <p>
+              這個網站使用健康指標與生活型態欄位建立風險模型，輸出的是糖尿病風險估計，而不是正式診斷結果。
+            </p>
+            <div id="aboutModelInfo" class="about-note-list"></div>
+          </article>
+
+          <article class="sub-card">
+            <p class="section-kicker">如何解讀</p>
+            <h2>看到結果後要怎麼看</h2>
+            <ul class="benefit-list">
+              <li>風險機率越高，代表模型判定你的風險訊號越強。</li>
+              <li>需要留意的訊號是依你填寫的欄位規則整理，不等於醫師診斷。</li>
+              <li>若結果偏高，最有價值的下一步是安排正式血糖或 HbA1c 檢查。</li>
+            </ul>
+          </article>
+
+          <article class="sub-card about-wide">
+            <p class="section-kicker">注意事項</p>
+            <h2>這不是醫療診斷</h2>
+            <p class="disclaimer-text">
+              這個網站的結果只適合用來做風險參考與健康教育，不能取代醫師診斷、抽血檢查或正式醫療建議。
+              如果你本身已有高血壓、高膽固醇、體重過高、身體不適或家族病史，請把這個結果當成提醒，而不是結論。
+            </p>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

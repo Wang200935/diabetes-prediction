@@ -1,6 +1,6 @@
 {
-  "model_name": "HistGradientBoosting",
-  "model_version": "2026-04-21T11-07-37Z",
+  "model_name": "CalibratedLogisticRegression",
+  "model_version": "2026-04-21T11-38-01Z",
   "threshold": 0.5,
   "dataset_path": "/Users/wang/Downloads/archive/diabetes_binary_health_indicators_BRFSS2015.csv",
   "dataset_id": "alexteboul/diabetes-health-indicators-dataset",
@@ -24,11 +24,45 @@
     "Income"
   ],
   "metrics": {
-    "accuracy": 0.9031,
-    "precision": 0.953,
-    "recall": 0.8482,
-    "f1": 0.8975,
-    "roc_auc": 0.9584
+    "accuracy": 0.8621,
+    "precision": 0.5172,
+    "recall": 0.1532,
+    "f1": 0.2364,
+    "roc_auc": 0.8169,
+    "brier_score": 0.1005
+  },
+  "candidate_metrics": [
+    {
+      "model_name": "CalibratedLogisticRegression",
+      "accuracy": 0.8621,
+      "precision": 0.5172,
+      "recall": 0.1532,
+      "f1": 0.2364,
+      "roc_auc": 0.8169,
+      "brier_score": 0.1005
+    },
+    {
+      "model_name": "CalibratedRandomForest",
+      "accuracy": 0.8647,
+      "precision": 0.5581,
+      "recall": 0.1393,
+      "f1": 0.223,
+      "roc_auc": 0.8217,
+      "brier_score": 0.0984
+    }
+  ],
+  "class_distribution": {
+    "negative": 218334,
+    "positive": 35346
+  },
+  "calibration": {
+    "method": "sigmoid",
+    "cv": 5
+  },
+  "sanity_examples": {
+    "low": 0.0046,
+    "mid": 0.0811,
+    "high": 0.6997
   },
   "disclaimer": "此結果僅供風險評估與健康教育參考，不能替代醫師診斷。"
 }

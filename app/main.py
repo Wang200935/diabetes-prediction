@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -29,7 +27,22 @@ app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
 
 @app.get("/", include_in_schema=False)
 def root() -> FileResponse:
-    return FileResponse(WEB_DIR / "index.html")
+    return FileResponse(WEB_DIR / "home.html")
+
+
+@app.get("/assessment", include_in_schema=False)
+def assessment() -> FileResponse:
+    return FileResponse(WEB_DIR / "assessment.html")
+
+
+@app.get("/result", include_in_schema=False)
+def result_page() -> FileResponse:
+    return FileResponse(WEB_DIR / "result.html")
+
+
+@app.get("/about", include_in_schema=False)
+def about_page() -> FileResponse:
+    return FileResponse(WEB_DIR / "about.html")
 
 
 @app.get("/health", response_model=HealthOutput)
@@ -62,4 +75,4 @@ def favicon() -> FileResponse:
     icon_path = WEB_DIR / "favicon.svg"
     if icon_path.exists():
         return FileResponse(icon_path)
-    return FileResponse(WEB_DIR / "index.html")
+    return FileResponse(WEB_DIR / "home.html")

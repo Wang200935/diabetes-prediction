@@ -1,3 +1,5 @@
+const PAGE = document.body.dataset.page;
+
 const FORM_SECTIONS = [
   {
     title: "基本資料",
@@ -13,7 +15,7 @@ const FORM_SECTIONS = [
     title: "慢性病與病史",
     description: "這些欄位與心血管代謝風險常一起出現。",
     fields: [
-      { name: "HighBP", type: "select", label: "是否有高血壓", hint: "0 表示沒有，1 表示有。" },
+      { name: "HighBP", type: "select", label: "是否有高血壓", hint: "若曾被醫師告知血壓偏高，請選擇是。" },
       { name: "HighChol", type: "select", label: "是否有高膽固醇", hint: "若曾被醫師告知高膽固醇，請選擇是。" },
       { name: "Stroke", type: "select", label: "是否曾中風", hint: "過往病史會影響整體風險估計。" },
       { name: "HeartDiseaseorAttack", type: "select", label: "是否曾有心臟病或心肌梗塞", hint: "請依照實際病史作答。" },
@@ -83,12 +85,6 @@ const DEMO_PAYLOAD = {
   Income: 6,
 };
 
-const formElement = document.getElementById("predictionForm");
-const sectionsContainer = document.getElementById("questionnaireSections");
-const resultsPanel = document.getElementById("resultsPanel");
-const formError = document.getElementById("formError");
-const fillDemoButton = document.getElementById("fillDemo");
-
 function createField(field) {
   const wrapper = document.createElement("div");
   wrapper.className = "field";
@@ -102,7 +98,6 @@ function createField(field) {
   if (field.type === "select") {
     input = document.createElement("select");
     input.innerHTML = `<option value="">請選擇</option>`;
-
     const options = ORDINAL_OPTIONS[field.name] || BINARY_OPTIONS.map(({ value, label: optionLabel }) => [value, optionLabel]);
     options.forEach(([value, optionLabel]) => {
       const option = document.createElement("option");
@@ -132,6 +127,9 @@ function createField(field) {
 }
 
 function renderQuestionnaire() {
+  const sectionsContainer = document.getElementById("questionnaireSections");
+  if (!sectionsContainer) return;
+
   FORM_SECTIONS.forEach((section) => {
     const sectionElement = document.createElement("section");
     sectionElement.className = "form-section";
@@ -161,7 +159,7 @@ function collectPayload() {
       if (!element.value) {
         throw new Error(`請完成欄位：${field.label}`);
       }
-      payload[field.name] = field.type === "number" ? Number(element.value) : Number(element.value);
+      payload[field.name] = Number(element.value);
     }
   }
   return payload;
@@ -177,30 +175,18 @@ function fillDemo() {
 }
 
 function setRiskVisual(probability, riskLevel, token) {
-  const gauge = document.getElementById("riskGauge");
   const riskPercent = document.getElementById("riskPercent");
   const riskLevelElement = document.getElementById("riskLevel");
+  if (!riskPercent || !riskLevelElement) return;
 
   riskPercent.textContent = `${Math.round(probability * 100)}%`;
   riskLevelElement.textContent = riskLevel;
   riskLevelElement.dataset.tone = token;
-
-  const angle = Math.max(0, Math.min(300, probability * 300));
-  gauge.style.background = `
-    conic-gradient(
-      from 210deg,
-      #6db998 0deg 85deg,
-      #deb14b 85deg 150deg,
-      #df7d4f 150deg 220deg,
-      #bd4656 220deg 300deg,
-      rgba(255, 255, 255, 0.9) 300deg 360deg
-    )
-  `;
-  gauge.style.setProperty("--risk-angle", `${angle}deg`);
 }
 
 function renderAttentionPoints(points) {
   const container = document.getElementById("attentionPoints");
+  if (!container) return;
   container.innerHTML = "";
 
   points.forEach((point) => {
@@ -220,6 +206,7 @@ function renderAttentionPoints(points) {
 
 function renderRecommendations(recommendations) {
   const container = document.getElementById("recommendations");
+  if (!container) return;
   container.innerHTML = "";
 
   recommendations.forEach((recommendation) => {
@@ -240,6 +227,7 @@ function renderRecommendations(recommendations) {
 
 function renderInputSummary(inputSummary) {
   const container = document.getElementById("inputSummary");
+  if (!container) return;
   container.innerHTML = "";
 
   Object.entries(inputSummary).forEach(([label, value]) => {
@@ -250,57 +238,118 @@ function renderInputSummary(inputSummary) {
   });
 }
 
-function renderResults(result) {
-  document.getElementById("resultModel").textContent = result.model_name;
+function persistResult(result) {
+  sessionStorage.setItem("latestPrediction", JSON.stringify(result));
+}
+
+function readPersistedResult() {
+  const raw = sessionStorage.getItem("latestPrediction");
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch (_error) {
+    return null;
+  }
+}
+
+function renderResultPage(result) {
+  const panel = document.getElementById("resultsPanel");
+  const emptyState = document.getElementById("emptyState");
+  if (!panel) return;
+
+  panel.classList.remove("hidden");
+  if (emptyState) emptyState.classList.add("hidden");
+
+  document.getElementById("predictedClass").textContent =
+    result.predicted_class === 1 ? "糖尿病風險偏高" : "糖尿病風險偏低";
+  document.getElementById("resultRiskLevel").textContent = result.risk_level;
   document.getElementById("resultThreshold").textContent = result.threshold.toFixed(2);
-  document.getElementById("predictedClass").textContent = result.predicted_class === 1 ? "糖尿病風險偏高" : "糖尿病風險偏低";
   document.getElementById("disclaimerText").textContent = result.disclaimer;
 
   setRiskVisual(result.risk_probability, result.risk_level, result.risk_token);
   renderAttentionPoints(result.attention_points);
   renderRecommendations(result.recommendations);
   renderInputSummary(result.input_summary);
-
-  resultsPanel.classList.remove("hidden");
-  const top = resultsPanel.getBoundingClientRect().top + window.pageYOffset - 24;
-  window.scrollTo({ top, behavior: "smooth" });
 }
 
-async function loadModelInfo() {
-  const response = await fetch("/api/model-info");
-  const info = await response.json();
-  document.getElementById("modelName").textContent = info.model_name;
-  document.getElementById("modelVersion").textContent = info.model_version;
-}
-
-formElement.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  formError.textContent = "";
+async function renderAboutPage() {
+  const container = document.getElementById("aboutModelInfo");
+  if (!container) return;
 
   try {
-    const payload = collectPayload();
-    const response = await fetch("/api/predict", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+    const response = await fetch("/api/model-info");
+    const info = await response.json();
+
+    const items = [
+      `此網站目前使用 ${info.model_name} 作為風險推估核心。`,
+      `風險判定門檻為 ${info.threshold.toFixed(2)}。`,
+      `問答欄位來自健康指標、生活習慣與自評健康狀況。`,
+    ];
+
+    container.innerHTML = "";
+    items.forEach((text) => {
+      const item = document.createElement("div");
+      item.className = "about-note";
+      item.innerHTML = `<p>${text}</p>`;
+      container.appendChild(item);
     });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || "預測失敗，請稍後再試。");
-    }
-
-    const result = await response.json();
-    renderResults(result);
-  } catch (error) {
-    formError.textContent = error.message;
+  } catch (_error) {
+    container.innerHTML = `<div class="about-note"><p>模型說明目前無法載入，請稍後再試。</p></div>`;
   }
-});
+}
 
-fillDemoButton.addEventListener("click", fillDemo);
+function initAssessmentPage() {
+  renderQuestionnaire();
 
-renderQuestionnaire();
-loadModelInfo().catch(() => {
-  document.getElementById("modelName").textContent = "模型資訊載入失敗";
-  document.getElementById("modelVersion").textContent = "-";
-});
+  const formElement = document.getElementById("predictionForm");
+  const formError = document.getElementById("formError");
+  const fillDemoButton = document.getElementById("fillDemo");
+
+  formElement.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    formError.textContent = "";
+
+    try {
+      const payload = collectPayload();
+      const response = await fetch("/api/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || "預測失敗，請稍後再試。");
+      }
+
+      const result = await response.json();
+      persistResult(result);
+      window.location.href = "/result";
+    } catch (error) {
+      formError.textContent = error.message;
+    }
+  });
+
+  fillDemoButton.addEventListener("click", fillDemo);
+}
+
+function initResultPage() {
+  const result = readPersistedResult();
+  if (!result) {
+    document.getElementById("emptyState").classList.remove("hidden");
+    return;
+  }
+  renderResultPage(result);
+}
+
+if (PAGE === "assessment") {
+  initAssessmentPage();
+}
+
+if (PAGE === "result") {
+  initResultPage();
+}
+
+if (PAGE === "about") {
+  renderAboutPage();
+}

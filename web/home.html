@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>糖尿病風險評估中心</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Sora:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body data-page="home">
+    <div class="site-bg"></div>
+    <div class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="/">糖尿病風險評估中心</a>
+        <nav class="nav">
+          <a href="/">首頁</a>
+          <a href="/assessment">開始評估</a>
+          <a href="/about">關於模型</a>
+        </nav>
+      </header>
+
+      <main class="page page-home">
+        <section class="hero hero-centered">
+          <div class="hero-copy hero-copy-wide">
+            <p class="eyebrow">Health Risk Experience</p>
+            <h1>用更直覺的方式，先看見你的糖尿病風險輪廓</h1>
+            <p class="hero-text">
+              透過一份簡潔的健康問答，把模型預測結果轉成容易理解的風險儀表、關鍵訊號與下一步建議。
+              這個網站適合一般使用者快速了解自己的風險趨勢，而不是看一堆技術名詞。
+            </p>
+            <div class="hero-actions">
+              <a class="primary-button" href="/assessment">立即開始評估</a>
+              <a class="ghost-button" href="/about">看看模型怎麼運作</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="feature-band">
+          <article class="feature-card">
+            <p class="section-kicker">01</p>
+            <h2>清楚的問答流程</h2>
+            <p>把欄位重新整理成一般人看得懂的分類，不用直接面對模型欄位代碼。</p>
+          </article>
+          <article class="feature-card">
+            <p class="section-kicker">02</p>
+            <h2>視覺化風險結果</h2>
+            <p>答完題後直接跳到獨立結果頁，用儀表與分級卡片顯示風險強弱。</p>
+          </article>
+          <article class="feature-card">
+            <p class="section-kicker">03</p>
+            <h2>有方向的建議</h2>
+            <p>不只告訴你高或低，也整理出值得優先關注的訊號與下一步建議。</p>
+          </article>
+        </section>
+
+        <section class="spotlight-grid">
+          <article class="spotlight-card tall-card">
+            <div class="mock-risk">
+              <div class="mock-gauge">
+                <div class="mock-gauge-core">
+                  <span>風險機率</span>
+                  <strong>68%</strong>
+                  <em>偏高風險</em>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="spotlight-card">
+            <p class="section-kicker">評估後你會看到</p>
+            <h2>結果不是只有一個分數</h2>
+            <ul class="benefit-list">
+              <li>風險儀表與風險等級</li>
+              <li>需要留意的健康訊號</li>
+              <li>可立即採取的生活建議</li>
+              <li>本次填答摘要與提醒</li>
+            </ul>
+          </article>
+        </section>
+      </main>
+    </div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
