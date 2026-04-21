@@ -176,18 +176,24 @@ function fillDemo() {
 
 function setRiskVisual(probability, riskLevel, token) {
   const gauge = document.getElementById("riskGauge");
-  const needle = document.getElementById("gaugeNeedle");
+  const progress = document.getElementById("gaugeProgress");
   const riskPercent = document.getElementById("riskPercent");
   const riskLevelElement = document.getElementById("riskLevel");
-  if (!gauge || !needle || !riskPercent || !riskLevelElement) return;
+  if (!gauge || !progress || !riskPercent || !riskLevelElement) return;
 
   riskPercent.textContent = `${Math.round(probability * 100)}%`;
   riskLevelElement.textContent = riskLevel;
   riskLevelElement.dataset.tone = token;
-
-  const angle = -120 + (probability * 240);
-  needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
   gauge.dataset.tone = token;
+
+  const radius = 78;
+  const circumference = 2 * Math.PI * radius;
+  progress.style.strokeDasharray = `${circumference}`;
+  progress.style.strokeDashoffset = `${circumference * (1 - probability)}`;
+
+  document.querySelectorAll(".risk-legend span").forEach((item) => {
+    item.classList.toggle("active", item.dataset.tone === token);
+  });
 }
 
 function renderAttentionPoints(points) {

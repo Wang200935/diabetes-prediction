@@ -40,7 +40,10 @@
             <div class="result-hero result-hero-single">
               <div class="gauge-card prominent-gauge-card">
                 <div class="gauge" id="riskGauge">
-                  <div class="gauge-needle" id="gaugeNeedle"></div>
+                  <svg class="gauge-svg" viewBox="0 0 220 220" aria-hidden="true">
+                    <circle class="gauge-track" cx="110" cy="110" r="78"></circle>
+                    <circle class="gauge-progress" id="gaugeProgress" cx="110" cy="110" r="78"></circle>
+                  </svg>
                   <div class="gauge-inner">
                     <span class="gauge-caption">風險機率</span>
                     <strong id="riskPercent">0%</strong>
