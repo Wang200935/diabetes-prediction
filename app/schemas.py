@@ -17,7 +17,7 @@ class PredictionInput(BaseModel):
     MentHlth: int = Field(ge=0, le=30)
     PhysHlth: int = Field(ge=0, le=30)
     DiffWalk: int = Field(ge=0, le=1)
-    Age: int = Field(ge=1, le=13)
+    Age: int = Field(ge=18, le=120)
     Education: int = Field(ge=1, le=6)
     Income: int = Field(ge=1, le=8)
 

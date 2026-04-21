@@ -47,7 +47,7 @@ FEATURE_LABELS = {
     "MentHlth": "過去 30 天心理不佳天數",
     "PhysHlth": "過去 30 天身體不佳天數",
     "DiffWalk": "是否行走困難",
-    "Age": "年齡組別",
+    "Age": "年齡",
     "Education": "教育程度",
     "Income": "收入等級",
 }
@@ -88,21 +88,6 @@ VALUE_OPTIONS = {
         4: "較差",
         5: "很差",
     },
-    "Age": {
-        1: "18-24歲",
-        2: "25-29歲",
-        3: "30-34歲",
-        4: "35-39歲",
-        5: "40-44歲",
-        6: "45-49歲",
-        7: "50-54歲",
-        8: "55-59歲",
-        9: "60-64歲",
-        10: "65-69歲",
-        11: "70-74歲",
-        12: "75-79歲",
-        13: "80歲以上",
-    },
     "Education": {
         1: "未曾就學",
         2: "國小",
@@ -137,7 +122,7 @@ FEATURE_SCHEMA = {
     "MentHlth": {"type": "integer", "min": 0, "max": 30},
     "PhysHlth": {"type": "integer", "min": 0, "max": 30},
     "DiffWalk": {"type": "binary", "min": 0, "max": 1},
-    "Age": {"type": "ordinal", "min": 1, "max": 13},
+    "Age": {"type": "integer", "min": 18, "max": 120},
     "Education": {"type": "ordinal", "min": 1, "max": 6},
     "Income": {"type": "ordinal", "min": 1, "max": 8},
 }
@@ -167,6 +152,34 @@ def build_summary_label(risk_token: str) -> str:
     return mapping.get(risk_token, "糖尿病風險需要留意")
 
 
+def age_to_bucket(age: int) -> int:
+    if age <= 24:
+        return 1
+    if age <= 29:
+        return 2
+    if age <= 34:
+        return 3
+    if age <= 39:
+        return 4
+    if age <= 44:
+        return 5
+    if age <= 49:
+        return 6
+    if age <= 54:
+        return 7
+    if age <= 59:
+        return 8
+    if age <= 64:
+        return 9
+    if age <= 69:
+        return 10
+    if age <= 74:
+        return 11
+    if age <= 79:
+        return 12
+    return 13
+
+
 def humanize_value(feature_name: str, value: float) -> str:
     options = VALUE_OPTIONS.get(feature_name)
     if options is not None:
@@ -175,6 +188,9 @@ def humanize_value(feature_name: str, value: float) -> str:
         except (TypeError, ValueError):
             return str(value)
         return options.get(value, str(value))
+
+    if feature_name == "Age":
+        return f"{int(value)} 歲"
 
     if feature_name == "BMI":
         return f"{value:.1f}"

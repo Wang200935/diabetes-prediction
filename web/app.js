@@ -5,8 +5,8 @@ const FORM_SECTIONS = [
     title: "基本資料",
     description: "這些欄位描述你的基本代謝背景與社會條件。",
     fields: [
-      { name: "BMI", type: "number", step: "0.1", min: 10, max: 80, label: "BMI", hint: "例如 22.5、31.4。通常高於 25 就需要開始留意。" },
-      { name: "Age", type: "select", label: "年齡組別", hint: "資料集使用年齡分組而不是實際歲數。" },
+      { name: "BMI", type: "number", step: "0.1", min: 10, max: 80, label: "BMI", hint: "如果你不知道 BMI，可以先用上面的工具算，再一鍵帶入。" },
+      { name: "Age", type: "number", min: 18, max: 120, label: "年齡", hint: "請直接輸入實際年齡，系統會自動轉成模型使用的年齡組別。" },
       { name: "Education", type: "select", label: "教育程度", hint: "請選擇最接近的教育程度。" },
       { name: "Income", type: "select", label: "收入等級", hint: "請依資料集收入區間選擇。" },
     ],
@@ -49,11 +49,6 @@ const BINARY_OPTIONS = [
 ];
 
 const ORDINAL_OPTIONS = {
-  Age: [
-    ["1", "18-24歲"], ["2", "25-29歲"], ["3", "30-34歲"], ["4", "35-39歲"],
-    ["5", "40-44歲"], ["6", "45-49歲"], ["7", "50-54歲"], ["8", "55-59歲"],
-    ["9", "60-64歲"], ["10", "65-69歲"], ["11", "70-74歲"], ["12", "75-79歲"], ["13", "80歲以上"],
-  ],
   Education: [
     ["1", "未曾就學"], ["2", "國小"], ["3", "國中"], ["4", "高中"], ["5", "大學"], ["6", "研究所以上"],
   ],
@@ -80,10 +75,19 @@ const DEMO_PAYLOAD = {
   MentHlth: 4,
   PhysHlth: 8,
   DiffWalk: 0,
-  Age: 9,
+  Age: 60,
   Education: 5,
   Income: 6,
 };
+
+function getBmiLevel(value) {
+  if (value < 18.5) return "過輕";
+  if (value < 24) return "正常";
+  if (value < 27) return "過重";
+  if (value < 30) return "輕度肥胖";
+  if (value < 35) return "中度肥胖";
+  return "重度肥胖";
+}
 
 function createField(field) {
   const wrapper = document.createElement("div");
@@ -124,6 +128,45 @@ function createField(field) {
   wrapper.appendChild(hint);
 
   return wrapper;
+}
+
+function updateBmiHelper() {
+  const heightInput = document.getElementById("bmiHeight");
+  const weightInput = document.getElementById("bmiWeight");
+  const bmiValue = document.getElementById("bmiCalculatedValue");
+  const bmiHint = document.getElementById("bmiCalculatedHint");
+
+  if (!heightInput || !weightInput || !bmiValue || !bmiHint) return;
+
+  const height = Number(heightInput.value);
+  const weight = Number(weightInput.value);
+  if (!height || !weight || height <= 0 || weight <= 0) {
+    bmiValue.textContent = "--";
+    bmiHint.textContent = "輸入身高與體重後，系統會自動算出 BMI。";
+    return;
+  }
+
+  const bmi = weight / ((height / 100) ** 2);
+  bmiValue.textContent = bmi.toFixed(1);
+  bmiHint.textContent = `目前屬於「${getBmiLevel(bmi)}」區間。`;
+}
+
+function initBmiHelper() {
+  const heightInput = document.getElementById("bmiHeight");
+  const weightInput = document.getElementById("bmiWeight");
+  const fillButton = document.getElementById("fillCalculatedBmi");
+  const bmiInput = document.getElementById("BMI");
+  if (!heightInput || !weightInput || !fillButton || !bmiInput) return;
+
+  heightInput.addEventListener("input", updateBmiHelper);
+  weightInput.addEventListener("input", updateBmiHelper);
+
+  fillButton.addEventListener("click", () => {
+    const value = document.getElementById("bmiCalculatedValue").textContent;
+    if (!value || value === "--") return;
+    bmiInput.value = value;
+    bmiInput.dispatchEvent(new Event("input"));
+  });
 }
 
 function renderQuestionnaire() {
@@ -310,6 +353,7 @@ async function renderAboutPage() {
 
 function initAssessmentPage() {
   renderQuestionnaire();
+  initBmiHelper();
 
   const formElement = document.getElementById("predictionForm");
   const formError = document.getElementById("formError");

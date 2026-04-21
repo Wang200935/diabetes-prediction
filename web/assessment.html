@@ -41,6 +41,34 @@
             </div>
             <p class="section-note">所有欄位都會在送出前做格式檢查。</p>
           </div>
+
+          <section class="bmi-helper">
+            <div class="bmi-helper-head">
+              <div>
+                <p class="section-kicker">BMI 小工具</p>
+                <h3>如果你不知道自己的 BMI，可以先在這裡算</h3>
+              </div>
+              <button type="button" id="fillCalculatedBmi" class="ghost-button small-button">帶入問卷 BMI</button>
+            </div>
+            <div class="field-grid">
+              <div class="field">
+                <label for="bmiHeight">身高（公分）</label>
+                <input id="bmiHeight" type="number" min="100" max="250" step="0.1" placeholder="例如 168" />
+              </div>
+              <div class="field">
+                <label for="bmiWeight">體重（公斤）</label>
+                <input id="bmiWeight" type="number" min="20" max="300" step="0.1" placeholder="例如 60" />
+              </div>
+            </div>
+            <div class="bmi-output">
+              <div>
+                <span>BMI 計算結果</span>
+                <strong id="bmiCalculatedValue">--</strong>
+              </div>
+              <p id="bmiCalculatedHint">輸入身高與體重後，系統會自動算出 BMI。</p>
+            </div>
+          </section>
+
           <form id="predictionForm" class="questionnaire-form">
             <div id="questionnaireSections" class="questionnaire-sections"></div>
             <div class="form-actions">

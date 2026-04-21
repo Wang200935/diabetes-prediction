@@ -10,6 +10,7 @@ from app.config import FEATURE_SCHEMA_PATH, MODEL_BUNDLE_PATH, MODEL_METADATA_PA
 from app.domain import (
     FEATURE_ORDER,
     FEATURE_LABELS,
+    age_to_bucket,
     build_feature_schema_payload,
     build_summary_label,
     classify_risk,
@@ -61,7 +62,12 @@ def get_model_info_payload() -> Dict[str, object]:
 
 
 def _prepare_feature_frame(payload: PredictionInput) -> pd.DataFrame:
-    row = {feature_name: float(getattr(payload, feature_name)) for feature_name in FEATURE_ORDER}
+    row = {}
+    for feature_name in FEATURE_ORDER:
+        value = float(getattr(payload, feature_name))
+        if feature_name == "Age":
+            value = float(age_to_bucket(int(value)))
+        row[feature_name] = value
     return pd.DataFrame([row], columns=FEATURE_ORDER)
 
 
