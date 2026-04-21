@@ -1,0 +1,19 @@
+[Unit]
+Description=CPAMC bridge service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=wang
+Group=wang
+WorkingDirectory=/opt/health-project/shared
+ExecStart=/opt/health-project/venv/bin/uvicorn cpamc_bridge:app --app-dir /opt/health-project/app/deploy/raspberry_pi --host 127.0.0.1 --port 8318
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+StandardOutput=append:/opt/health-project/logs/cpamc-bridge.log
+StandardError=append:/opt/health-project/logs/cpamc-bridge-error.log
+
+[Install]
+WantedBy=multi-user.target

@@ -77,6 +77,39 @@ sudo cp deploy/raspberry_pi/cloudflared-config.yml.example /etc/cloudflared/heal
 - `credentials-file`
 - `hostname`
 
+如果你要保留原本 `wangchatai.dpdns.org` 這個網站，同時再新增健康網站，建議這樣設：
+
+```yaml
+ingress:
+  - hostname: wangchatai.dpdns.org
+    service: http://127.0.0.1:8318
+  - hostname: health.wangchatai.dpdns.org
+    service: http://127.0.0.1:8320
+  - hostname: grok.wangchatai.dpdns.org
+    service: http://127.0.0.1:8000
+  - service: http_status:404
+```
+
+其中：
+- `8318` 是 CPAMC bridge，會把根網域導向 CPAMC 的 `/management.html#/`
+- `8320` 是這個健康網站
+
+如果你只有健康網站，才用下面這種簡單設定：
+
+```text
+http://127.0.0.1:8320
+```
+
+如果你要讓根網域自動進 CPAMC 管理頁，可另外安裝：
+
+```bash
+sudo cp deploy/raspberry_pi/cpamc-bridge.service /etc/systemd/system/cpamc-bridge.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now cpamc-bridge
+```
+
+## 8.1 單純健康網站時的 tunnel 指向
+
 讓它指向：
 ```text
 http://127.0.0.1:8320
