@@ -54,7 +54,7 @@ def build_attention_points(features: Dict[str, float]) -> List[Dict[str, str]]:
     if features["NoDocbcCost"] == 1:
         add("NoDocbcCost", "曾因費用延後就醫", "若因成本延後追蹤，建議優先確認可負擔的基礎檢查與照護資源。", "watch")
 
-    if features["Age"] >= 9:
+    if features["Age"] >= 60:
         add("Age", "年齡層風險上升", "年齡增長會提高代謝疾病風險，定期檢查的重要性也會提高。", "watch")
 
     return points[:5]
@@ -125,4 +125,3 @@ def build_recommendations(features: Dict[str, float], probability: float) -> Lis
         )
 
     return recommendations[:4]
-
