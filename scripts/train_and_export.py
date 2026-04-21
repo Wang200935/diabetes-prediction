@@ -8,6 +8,7 @@ import joblib
 import pandas as pd
 from kagglehub import dataset_download
 from sklearn.calibration import CalibratedClassifierCV
+from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, brier_score_loss, f1_score, precision_score, recall_score, roc_auc_score
@@ -60,12 +61,22 @@ def build_candidate_models():
         (
             "CalibratedRandomForest",
             RandomForestClassifier(
-                n_estimators=320,
+                n_estimators=180,
                 max_depth=10,
                 min_samples_leaf=8,
                 class_weight="balanced_subsample",
                 random_state=42,
                 n_jobs=-1,
+            ),
+            False,
+        ),
+        (
+            "CalibratedHistGradientBoosting",
+            HistGradientBoostingClassifier(
+                random_state=42,
+                max_depth=6,
+                learning_rate=0.06,
+                max_iter=200,
             ),
             False,
         ),
@@ -82,7 +93,7 @@ def evaluate_candidate(model_name, estimator, use_scaler, X_train, y_train, X_te
         X_train_ready = X_train.to_numpy()
         X_test_ready = X_test.to_numpy()
 
-    calibrated_model = CalibratedClassifierCV(estimator=estimator, method="sigmoid", cv=5)
+    calibrated_model = CalibratedClassifierCV(estimator=estimator, method="sigmoid", cv=3)
     calibrated_model.fit(X_train_ready, y_train)
 
     y_prob = calibrated_model.predict_proba(X_test_ready)[:, 1]
@@ -196,8 +207,15 @@ def main() -> int:
         evaluate_candidate(name, estimator, use_scaler, X_train, y_train, X_test, y_test)
         for name, estimator, use_scaler in build_candidate_models()
     ]
-    candidate_results_by_name = {candidate["model_name"]: candidate for candidate in candidate_results}
-    best = candidate_results_by_name["CalibratedLogisticRegression"]
+    candidate_results.sort(
+        key=lambda item: (
+            item["metrics"]["accuracy"],
+            item["metrics"]["roc_auc"],
+            -item["metrics"]["brier_score"],
+        ),
+        reverse=True,
+    )
+    best = candidate_results[0]
 
     example_probs = predict_examples(best["model"], best["scaler"], build_sanity_examples())
 

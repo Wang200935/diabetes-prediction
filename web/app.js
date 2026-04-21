@@ -263,7 +263,6 @@ function renderResultPage(result) {
   document.getElementById("predictedClass").textContent =
     result.predicted_class === 1 ? "糖尿病風險偏高" : "糖尿病風險偏低";
   document.getElementById("resultRiskLevel").textContent = result.risk_level;
-  document.getElementById("resultThreshold").textContent = result.threshold.toFixed(2);
   document.getElementById("disclaimerText").textContent = result.disclaimer;
 
   setRiskVisual(result.risk_probability, result.risk_level, result.risk_token);
@@ -282,8 +281,8 @@ async function renderAboutPage() {
 
     const items = [
       `此網站目前使用 ${info.model_name} 作為風險推估核心。`,
-      `風險判定門檻為 ${info.threshold.toFixed(2)}。`,
       `問答欄位來自健康指標、生活習慣與自評健康狀況。`,
+      `結果頁會把預測分數轉成一般人比較容易理解的風險分級與建議。`,
     ];
 
     container.innerHTML = "";

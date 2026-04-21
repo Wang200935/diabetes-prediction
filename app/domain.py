@@ -143,9 +143,9 @@ FEATURE_SCHEMA = {
 }
 
 RISK_BANDS: List[Tuple[float, str, str]] = [
-    (0.05, "低風險", "low"),
-    (0.20, "中等風險", "medium"),
-    (0.45, "偏高風險", "elevated"),
+    (0.10, "低風險", "low"),
+    (0.30, "中等風險", "medium"),
+    (0.60, "偏高風險", "elevated"),
     (1.01, "高風險", "high"),
 ]
 
