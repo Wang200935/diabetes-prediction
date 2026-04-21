@@ -2,5 +2,3 @@ __pycache__/
 *.pyc
 .venv/
 .venv-notebook/
-artifacts/model_bundle.joblib
-artifacts/*.json

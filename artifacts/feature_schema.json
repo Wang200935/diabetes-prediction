@@ -1,0 +1,241 @@
+[
+  {
+    "name": "HighBP",
+    "label": "是否有高血壓",
+    "group": "慢性病與病史",
+    "meta": {
+      "type": "binary",
+      "min": 0,
+      "max": 1
+    },
+    "options": {
+      "0": "否",
+      "1": "是"
+    }
+  },
+  {
+    "name": "HighChol",
+    "label": "是否有高膽固醇",
+    "group": "慢性病與病史",
+    "meta": {
+      "type": "binary",
+      "min": 0,
+      "max": 1
+    },
+    "options": {
+      "0": "否",
+      "1": "是"
+    }
+  },
+  {
+    "name": "BMI",
+    "label": "BMI",
+    "group": "基本資料",
+    "meta": {
+      "type": "float",
+      "min": 10,
+      "max": 80
+    },
+    "options": null
+  },
+  {
+    "name": "Smoker",
+    "label": "是否吸菸",
+    "group": "生活習慣",
+    "meta": {
+      "type": "binary",
+      "min": 0,
+      "max": 1
+    },
+    "options": {
+      "0": "否",
+      "1": "是"
+    }
+  },
+  {
+    "name": "Stroke",
+    "label": "是否曾中風",
+    "group": "慢性病與病史",
+    "meta": {
+      "type": "binary",
+      "min": 0,
+      "max": 1
+    },
+    "options": {
+      "0": "否",
+      "1": "是"
+    }
+  },
+  {
+    "name": "HeartDiseaseorAttack",
+    "label": "是否曾有心臟病或心肌梗塞",
+    "group": "慢性病與病史",
+    "meta": {
+      "type": "binary",
+      "min": 0,
+      "max": 1
+    },
+    "options": {
+      "0": "否",
+      "1": "是"
+    }
+  },
+  {
+    "name": "PhysActivity",
+    "label": "是否規律運動",
+    "group": "生活習慣",
+    "meta": {
+      "type": "binary",
+      "min": 0,
+      "max": 1
+    },
+    "options": {
+      "0": "否",
+      "1": "是"
+    }
+  },
+  {
+    "name": "HvyAlcoholConsump",
+    "label": "是否重度飲酒",
+    "group": "生活習慣",
+    "meta": {
+      "type": "binary",
+      "min": 0,
+      "max": 1
+    },
+    "options": {
+      "0": "否",
+      "1": "是"
+    }
+  },
+  {
+    "name": "NoDocbcCost",
+    "label": "是否曾因費用而無法就醫",
+    "group": "健康狀況",
+    "meta": {
+      "type": "binary",
+      "min": 0,
+      "max": 1
+    },
+    "options": {
+      "0": "否",
+      "1": "是"
+    }
+  },
+  {
+    "name": "GenHlth",
+    "label": "自評整體健康",
+    "group": "健康狀況",
+    "meta": {
+      "type": "ordinal",
+      "min": 1,
+      "max": 5
+    },
+    "options": {
+      "1": "極佳",
+      "2": "很好",
+      "3": "普通",
+      "4": "較差",
+      "5": "很差"
+    }
+  },
+  {
+    "name": "MentHlth",
+    "label": "過去 30 天心理不佳天數",
+    "group": "健康狀況",
+    "meta": {
+      "type": "integer",
+      "min": 0,
+      "max": 30
+    },
+    "options": null
+  },
+  {
+    "name": "PhysHlth",
+    "label": "過去 30 天身體不佳天數",
+    "group": "健康狀況",
+    "meta": {
+      "type": "integer",
+      "min": 0,
+      "max": 30
+    },
+    "options": null
+  },
+  {
+    "name": "DiffWalk",
+    "label": "是否行走困難",
+    "group": "健康狀況",
+    "meta": {
+      "type": "binary",
+      "min": 0,
+      "max": 1
+    },
+    "options": {
+      "0": "否",
+      "1": "是"
+    }
+  },
+  {
+    "name": "Age",
+    "label": "年齡組別",
+    "group": "基本資料",
+    "meta": {
+      "type": "ordinal",
+      "min": 1,
+      "max": 13
+    },
+    "options": {
+      "1": "18-24歲",
+      "2": "25-29歲",
+      "3": "30-34歲",
+      "4": "35-39歲",
+      "5": "40-44歲",
+      "6": "45-49歲",
+      "7": "50-54歲",
+      "8": "55-59歲",
+      "9": "60-64歲",
+      "10": "65-69歲",
+      "11": "70-74歲",
+      "12": "75-79歲",
+      "13": "80歲以上"
+    }
+  },
+  {
+    "name": "Education",
+    "label": "教育程度",
+    "group": "基本資料",
+    "meta": {
+      "type": "ordinal",
+      "min": 1,
+      "max": 6
+    },
+    "options": {
+      "1": "未曾就學",
+      "2": "國小",
+      "3": "國中",
+      "4": "高中",
+      "5": "大學",
+      "6": "研究所以上"
+    }
+  },
+  {
+    "name": "Income",
+    "label": "收入等級",
+    "group": "基本資料",
+    "meta": {
+      "type": "ordinal",
+      "min": 1,
+      "max": 8
+    },
+    "options": {
+      "1": "低於 10,000 美元",
+      "2": "10,000-14,999 美元",
+      "3": "15,000-19,999 美元",
+      "4": "20,000-24,999 美元",
+      "5": "25,000-34,999 美元",
+      "6": "35,000-49,999 美元",
+      "7": "50,000-74,999 美元",
+      "8": "75,000 美元以上"
+    }
+  }
+]
