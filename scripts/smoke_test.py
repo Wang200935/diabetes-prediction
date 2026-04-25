@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR))
 
-from app.modeling import get_model_info_payload, predict_payload  # noqa: E402
+from app.modeling import load_model_metadata, predict_payload  # noqa: E402
 from app.schemas import PredictionInput  # noqa: E402
 
 
@@ -21,18 +21,17 @@ def main() -> int:
         HeartDiseaseorAttack=0,
         PhysActivity=1,
         HvyAlcoholConsump=0,
-        NoDocbcCost=0,
         GenHlth=3,
         MentHlth=4,
         PhysHlth=8,
         DiffWalk=0,
-        Age=9,
+        Age=60,
         Education=5,
         Income=6,
     )
 
-    print("Model info:")
-    print(json.dumps(get_model_info_payload(), ensure_ascii=False, indent=2))
+    print("Model metadata:")
+    print(json.dumps(load_model_metadata(), ensure_ascii=False, indent=2))
     print("\nSample prediction:")
     print(json.dumps(predict_payload(sample), ensure_ascii=False, indent=2))
     return 0

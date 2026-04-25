@@ -6,9 +6,9 @@ const FORM_SECTIONS = [
     description: "這些欄位描述你的基本代謝背景與社會條件。",
     fields: [
       { name: "BMI", type: "number", step: "0.1", min: 10, max: 80, label: "BMI", hint: "如果你不知道 BMI，可以先用上面的工具算，再一鍵帶入。" },
-      { name: "Age", type: "number", min: 18, max: 120, label: "年齡", hint: "請直接輸入實際年齡，系統會自動轉成模型使用的年齡組別。" },
+      { name: "Age", type: "number", min: 0, max: 120, label: "年齡", hint: "請直接輸入實際年齡，嬰幼兒到高齡者都可以填。" },
       { name: "Education", type: "select", label: "教育程度", hint: "請選擇最接近的教育程度。" },
-      { name: "Income", type: "select", label: "收入等級", hint: "請依資料集收入區間選擇。" },
+      { name: "Income", type: "select", label: "年收入等級", hint: "這是年收入區間，已依原始資料集級距換算成新台幣約略級距。" },
     ],
   },
   {
@@ -38,7 +38,6 @@ const FORM_SECTIONS = [
       { name: "MentHlth", type: "number", min: 0, max: 30, label: "過去 30 天心理不佳天數", hint: "請填 0 到 30 之間的整數。" },
       { name: "PhysHlth", type: "number", min: 0, max: 30, label: "過去 30 天身體不佳天數", hint: "例如疲勞、疼痛、不舒服等天數。" },
       { name: "DiffWalk", type: "select", label: "是否行走困難", hint: "若走路或爬樓梯有明顯困難，請選擇是。" },
-      { name: "NoDocbcCost", type: "select", label: "是否曾因費用無法就醫", hint: "這個欄位會反映醫療可近性。" },
     ],
   },
 ];
@@ -53,8 +52,10 @@ const ORDINAL_OPTIONS = {
     ["1", "未曾就學"], ["2", "國小"], ["3", "國中"], ["4", "高中"], ["5", "大學"], ["6", "研究所以上"],
   ],
   Income: [
-    ["1", "低於 10,000 美元"], ["2", "10,000-14,999 美元"], ["3", "15,000-19,999 美元"], ["4", "20,000-24,999 美元"],
-    ["5", "25,000-34,999 美元"], ["6", "35,000-49,999 美元"], ["7", "50,000-74,999 美元"], ["8", "75,000 美元以上"],
+    ["1", "年收入低於新台幣 32 萬元"], ["2", "年收入約新台幣 32-48 萬元"],
+    ["3", "年收入約新台幣 48-64 萬元"], ["4", "年收入約新台幣 64-80 萬元"],
+    ["5", "年收入約新台幣 80-112 萬元"], ["6", "年收入約新台幣 112-160 萬元"],
+    ["7", "年收入約新台幣 160-240 萬元"], ["8", "年收入新台幣 240 萬元以上"],
   ],
   GenHlth: [
     ["1", "極佳"], ["2", "很好"], ["3", "普通"], ["4", "較差"], ["5", "很差"],
@@ -70,7 +71,6 @@ const DEMO_PAYLOAD = {
   HeartDiseaseorAttack: 0,
   PhysActivity: 1,
   HvyAlcoholConsump: 0,
-  NoDocbcCost: 0,
   GenHlth: 3,
   MentHlth: 4,
   PhysHlth: 8,
@@ -108,7 +108,10 @@ function createField(field) {
   let input;
   if (field.type === "select") {
     input = document.createElement("select");
-    input.innerHTML = `<option value="">請選擇</option>`;
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "請選擇";
+    input.appendChild(placeholder);
     const options = ORDINAL_OPTIONS[field.name] || BINARY_OPTIONS.map(({ value, label: optionLabel }) => [value, optionLabel]);
     options.forEach(([value, optionLabel]) => {
       const option = document.createElement("option");
@@ -262,13 +265,23 @@ function renderAttentionPoints(points) {
     const item = document.createElement("article");
     item.className = "attention-item";
     item.dataset.severity = point.severity;
-    item.innerHTML = `
-      <div class="attention-topline">
-        <strong>${point.title}</strong>
-        <span class="severity-tag" data-severity="${point.severity}">${point.severity === "high" ? "優先注意" : "建議留意"}</span>
-      </div>
-      <p>${point.detail}</p>
-    `;
+
+    const topline = document.createElement("div");
+    topline.className = "attention-topline";
+
+    const title = document.createElement("strong");
+    title.textContent = point.title;
+
+    const tag = document.createElement("span");
+    tag.className = "severity-tag";
+    tag.dataset.severity = point.severity;
+    tag.textContent = point.severity === "high" ? "優先注意" : "建議留意";
+
+    const detail = document.createElement("p");
+    detail.textContent = point.detail;
+
+    topline.append(title, tag);
+    item.append(topline, detail);
     container.appendChild(item);
   });
 }
@@ -281,15 +294,23 @@ function renderRecommendations(recommendations) {
   recommendations.forEach((recommendation) => {
     const item = document.createElement("article");
     item.className = "recommendation-item";
-    item.innerHTML = `
-      <div class="recommendation-topline">
-        <strong>${recommendation.title}</strong>
-        <span class="priority-tag" data-priority="${recommendation.priority}">
-          ${recommendation.priority === "high" ? "優先處理" : recommendation.priority === "medium" ? "值得安排" : "持續維持"}
-        </span>
-      </div>
-      <p>${recommendation.description}</p>
-    `;
+
+    const topline = document.createElement("div");
+    topline.className = "recommendation-topline";
+
+    const title = document.createElement("strong");
+    title.textContent = recommendation.title;
+
+    const tag = document.createElement("span");
+    tag.className = "priority-tag";
+    tag.dataset.priority = recommendation.priority;
+    tag.textContent = recommendation.priority === "high" ? "優先處理" : recommendation.priority === "medium" ? "值得安排" : "持續維持";
+
+    const description = document.createElement("p");
+    description.textContent = recommendation.description;
+
+    topline.append(title, tag);
+    item.append(topline, description);
     container.appendChild(item);
   });
 }
@@ -302,7 +323,11 @@ function renderInputSummary(inputSummary) {
   Object.entries(inputSummary).forEach(([label, value]) => {
     const item = document.createElement("div");
     item.className = "summary-chip";
-    item.innerHTML = `<span>${label}</span><strong>${value}</strong>`;
+    const labelElement = document.createElement("span");
+    labelElement.textContent = label;
+    const valueElement = document.createElement("strong");
+    valueElement.textContent = value;
+    item.append(labelElement, valueElement);
     container.appendChild(item);
   });
 }
@@ -337,7 +362,6 @@ function renderResultPage(result) {
   setRiskVisual(result.risk_probability, result.risk_level, result.risk_token);
   renderAttentionPoints(result.attention_points);
   renderRecommendations(result.recommendations);
-  renderInputSummary(result.input_summary);
 }
 
 function renderAboutPage() {
@@ -345,16 +369,20 @@ function renderAboutPage() {
   if (!container) return;
 
   const items = [
-    "系統會把你填寫的健康與生活習慣資料整理後，再交給風險模型做判斷。",
-    "模型只用來估算風險高低，不能直接當成醫療診斷結果。",
-    "結果頁會把分數轉成比較容易理解的風險等級、提醒訊號與下一步建議。",
+    "資料來源是 BRFSS 2015 糖尿病健康指標資料，共約 25 萬筆紀錄。",
+    "目前使用測試準確率最高的校準式梯度提升分類模型，並和隨機森林、邏輯斯迴歸做過比較。",
+    "模型輸入 15 個欄位，包含血壓、膽固醇、BMI、運動、吸菸、年齡、教育程度與年收入等。",
+    "模型選擇以準確率為優先，同時保留 ROC-AUC、Average Precision 與 Brier Score 檢查整體表現。",
+    "結果是糖尿病風險估計，不是診斷；若風險偏高，仍需要正式血糖檢查確認。",
   ];
 
   container.innerHTML = "";
   items.forEach((text) => {
     const item = document.createElement("div");
     item.className = "about-note";
-    item.innerHTML = `<p>${text}</p>`;
+    const paragraph = document.createElement("p");
+    paragraph.textContent = text;
+    item.appendChild(paragraph);
     container.appendChild(item);
   });
 }

@@ -1,7 +1,7 @@
 {
   "model_name": "CalibratedHistGradientBoosting",
-  "model_version": "2026-04-21T11-59-23Z",
-  "threshold": 0.5,
+  "model_version": "2026-04-25T08-02-05Z",
+  "threshold": 0.35,
   "dataset_path": "/Users/wang/Downloads/archive/diabetes_binary_health_indicators_BRFSS2015.csv",
   "dataset_id": "alexteboul/diabetes-health-indicators-dataset",
   "csv_name": "diabetes_binary_health_indicators_BRFSS2015.csv",
@@ -14,7 +14,6 @@
     "HeartDiseaseorAttack",
     "PhysActivity",
     "HvyAlcoholConsump",
-    "NoDocbcCost",
     "GenHlth",
     "MentHlth",
     "PhysHlth",
@@ -24,42 +23,152 @@
     "Income"
   ],
   "metrics": {
-    "accuracy": 0.8654,
-    "precision": 0.5627,
-    "recall": 0.1516,
-    "f1": 0.2389,
+    "accuracy": 0.8653,
+    "precision": 0.5624,
+    "recall": 0.1498,
+    "f1": 0.2366,
     "roc_auc": 0.8242,
+    "average_precision": 0.4194,
     "brier_score": 0.0978
   },
   "candidate_metrics": [
     {
       "model_name": "CalibratedHistGradientBoosting",
-      "accuracy": 0.8654,
-      "precision": 0.5627,
-      "recall": 0.1516,
-      "f1": 0.2389,
+      "accuracy": 0.8653,
+      "precision": 0.5624,
+      "recall": 0.1498,
+      "f1": 0.2366,
       "roc_auc": 0.8242,
-      "brier_score": 0.0978
+      "average_precision": 0.4194,
+      "brier_score": 0.0978,
+      "threshold_metrics": {
+        "0.15": {
+          "accuracy": 0.7344,
+          "precision": 0.3142,
+          "recall": 0.7659,
+          "f1": 0.4456,
+          "specificity": 0.7293,
+          "true_positive": 5414,
+          "false_positive": 11819,
+          "true_negative": 31848,
+          "false_negative": 1655
+        },
+        "0.35": {
+          "accuracy": 0.8512,
+          "precision": 0.4591,
+          "recall": 0.3822,
+          "f1": 0.4172,
+          "specificity": 0.9271,
+          "true_positive": 2702,
+          "false_positive": 3183,
+          "true_negative": 40484,
+          "false_negative": 4367
+        },
+        "0.5": {
+          "accuracy": 0.8653,
+          "precision": 0.5624,
+          "recall": 0.1498,
+          "f1": 0.2366,
+          "specificity": 0.9811,
+          "true_positive": 1059,
+          "false_positive": 824,
+          "true_negative": 42843,
+          "false_negative": 6010
+        }
+      }
     },
     {
       "model_name": "CalibratedRandomForest",
-      "accuracy": 0.8646,
-      "precision": 0.5553,
-      "recall": 0.1413,
-      "f1": 0.2253,
-      "roc_auc": 0.8216,
-      "brier_score": 0.0984
+      "accuracy": 0.864,
+      "precision": 0.5475,
+      "recall": 0.1378,
+      "f1": 0.2202,
+      "roc_auc": 0.8213,
+      "average_precision": 0.4131,
+      "brier_score": 0.0985,
+      "threshold_metrics": {
+        "0.15": {
+          "accuracy": 0.7421,
+          "precision": 0.3192,
+          "recall": 0.7513,
+          "f1": 0.4481,
+          "specificity": 0.7406,
+          "true_positive": 5311,
+          "false_positive": 11327,
+          "true_negative": 32340,
+          "false_negative": 1758
+        },
+        "0.35": {
+          "accuracy": 0.8456,
+          "precision": 0.4425,
+          "recall": 0.4166,
+          "f1": 0.4292,
+          "specificity": 0.915,
+          "true_positive": 2945,
+          "false_positive": 3710,
+          "true_negative": 39957,
+          "false_negative": 4124
+        },
+        "0.5": {
+          "accuracy": 0.864,
+          "precision": 0.5475,
+          "recall": 0.1378,
+          "f1": 0.2202,
+          "specificity": 0.9816,
+          "true_positive": 974,
+          "false_positive": 805,
+          "true_negative": 42862,
+          "false_negative": 6095
+        }
+      }
     },
     {
       "model_name": "CalibratedLogisticRegression",
       "accuracy": 0.8621,
-      "precision": 0.517,
-      "recall": 0.1531,
-      "f1": 0.2362,
+      "precision": 0.5174,
+      "recall": 0.1532,
+      "f1": 0.2364,
       "roc_auc": 0.8169,
-      "brier_score": 0.1005
+      "average_precision": 0.3892,
+      "brier_score": 0.1005,
+      "threshold_metrics": {
+        "0.15": {
+          "accuracy": 0.7438,
+          "precision": 0.3189,
+          "recall": 0.7384,
+          "f1": 0.4454,
+          "specificity": 0.7447,
+          "true_positive": 5220,
+          "false_positive": 11148,
+          "true_negative": 32519,
+          "false_negative": 1849
+        },
+        "0.35": {
+          "accuracy": 0.8484,
+          "precision": 0.4412,
+          "recall": 0.3293,
+          "f1": 0.3771,
+          "specificity": 0.9325,
+          "true_positive": 2328,
+          "false_positive": 2949,
+          "true_negative": 40718,
+          "false_negative": 4741
+        },
+        "0.5": {
+          "accuracy": 0.8621,
+          "precision": 0.5174,
+          "recall": 0.1532,
+          "f1": 0.2364,
+          "specificity": 0.9769,
+          "true_positive": 1083,
+          "false_positive": 1010,
+          "true_negative": 42657,
+          "false_negative": 5986
+        }
+      }
     }
   ],
+  "selection_policy": "Models are ranked by accuracy first, then ROC-AUC, then average precision, then lower Brier score.",
   "class_distribution": {
     "negative": 218334,
     "positive": 35346
@@ -68,10 +177,11 @@
     "method": "sigmoid",
     "cv": 5
   },
+  "threshold_note": "正式網站使用 0.35 作為提醒門檻，讓 predicted_class 與偏高/高風險區間一致。metadata 仍保留 0.5 門檻的比較結果，方便後續評估。",
   "sanity_examples": {
-    "low": 0.0016,
-    "mid": 0.0927,
-    "high": 0.4857
+    "low": 0.0017,
+    "mid": 0.094,
+    "high": 0.5399
   },
   "disclaimer": "此結果僅供風險評估與健康教育參考，不能替代醫師診斷。"
 }

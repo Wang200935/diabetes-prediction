@@ -11,13 +11,24 @@ from sklearn.calibration import CalibratedClassifierCV
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, brier_score_loss, f1_score, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import (
+    accuracy_score,
+    average_precision_score,
+    brier_score_loss,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+)
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR))
+
+PREDICTION_THRESHOLD = 0.35
 
 from app.config import ARTIFACT_DIR, FEATURE_SCHEMA_PATH, MODEL_BUNDLE_PATH, MODEL_METADATA_PATH  # noqa: E402
 from app.domain import (  # noqa: E402
@@ -105,14 +116,32 @@ def evaluate_candidate(model_name, estimator, use_scaler, X_train, y_train, X_te
         "recall": round(float(recall_score(y_test, y_pred)), 4),
         "f1": round(float(f1_score(y_test, y_pred)), 4),
         "roc_auc": round(float(roc_auc_score(y_test, y_prob)), 4),
+        "average_precision": round(float(average_precision_score(y_test, y_prob)), 4),
         "brier_score": round(float(brier_score_loss(y_test, y_prob)), 4),
     }
+
+    threshold_metrics = {}
+    for threshold in (0.15, 0.35, 0.5):
+        threshold_pred = (y_prob >= threshold).astype(int)
+        tn, fp, fn, tp = confusion_matrix(y_test, threshold_pred).ravel()
+        threshold_metrics[str(threshold)] = {
+            "accuracy": round(float(accuracy_score(y_test, threshold_pred)), 4),
+            "precision": round(float(precision_score(y_test, threshold_pred, zero_division=0)), 4),
+            "recall": round(float(recall_score(y_test, threshold_pred)), 4),
+            "f1": round(float(f1_score(y_test, threshold_pred, zero_division=0)), 4),
+            "specificity": round(float(tn / (tn + fp)), 4),
+            "true_positive": int(tp),
+            "false_positive": int(fp),
+            "true_negative": int(tn),
+            "false_negative": int(fn),
+        }
 
     return {
         "model_name": model_name,
         "model": calibrated_model,
         "scaler": scaler,
         "metrics": metrics,
+        "threshold_metrics": threshold_metrics,
         "test_probability": y_prob,
         "test_prediction": y_pred,
     }
@@ -129,7 +158,6 @@ def build_sanity_examples():
             "HeartDiseaseorAttack": 0,
             "PhysActivity": 1,
             "HvyAlcoholConsump": 0,
-            "NoDocbcCost": 0,
             "GenHlth": 1,
             "MentHlth": 0,
             "PhysHlth": 0,
@@ -147,7 +175,6 @@ def build_sanity_examples():
             "HeartDiseaseorAttack": 0,
             "PhysActivity": 1,
             "HvyAlcoholConsump": 0,
-            "NoDocbcCost": 0,
             "GenHlth": 3,
             "MentHlth": 3,
             "PhysHlth": 3,
@@ -165,7 +192,6 @@ def build_sanity_examples():
             "HeartDiseaseorAttack": 1,
             "PhysActivity": 0,
             "HvyAlcoholConsump": 1,
-            "NoDocbcCost": 1,
             "GenHlth": 5,
             "MentHlth": 20,
             "PhysHlth": 20,
@@ -211,6 +237,7 @@ def main() -> int:
         key=lambda item: (
             item["metrics"]["accuracy"],
             item["metrics"]["roc_auc"],
+            item["metrics"]["average_precision"],
             -item["metrics"]["brier_score"],
         ),
         reverse=True,
@@ -225,7 +252,7 @@ def main() -> int:
     metadata = {
         "model_name": best["model_name"],
         "model_version": model_version,
-        "threshold": 0.5,
+        "threshold": PREDICTION_THRESHOLD,
         "dataset_path": str(data_path),
         "dataset_id": DATASET_ID,
         "csv_name": CSV_NAME,
@@ -235,9 +262,11 @@ def main() -> int:
             {
                 "model_name": candidate["model_name"],
                 **candidate["metrics"],
+                "threshold_metrics": candidate["threshold_metrics"],
             }
             for candidate in candidate_results
         ],
+        "selection_policy": "Models are ranked by accuracy first, then ROC-AUC, then average precision, then lower Brier score.",
         "class_distribution": {
             "negative": int((y == 0).sum()),
             "positive": int((y == 1).sum()),
@@ -246,6 +275,10 @@ def main() -> int:
             "method": "sigmoid",
             "cv": 5,
         },
+        "threshold_note": (
+            "正式網站使用 0.35 作為提醒門檻，讓 predicted_class 與偏高/高風險區間一致。"
+            "metadata 仍保留 0.5 門檻的比較結果，方便後續評估。"
+        ),
         "sanity_examples": example_probs,
         "disclaimer": "此結果僅供風險評估與健康教育參考，不能替代醫師診斷。",
     }

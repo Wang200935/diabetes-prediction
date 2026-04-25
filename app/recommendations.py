@@ -51,9 +51,6 @@ def build_attention_points(features: Dict[str, float]) -> List[Dict[str, str]]:
     if features["DiffWalk"] == 1:
         add("DiffWalk", "行動困難", "活動受限會降低日常能量消耗，也可能反映整體健康負擔較高。", "watch")
 
-    if features["NoDocbcCost"] == 1:
-        add("NoDocbcCost", "曾因費用延後就醫", "若因成本延後追蹤，建議優先確認可負擔的基礎檢查與照護資源。", "watch")
-
     if features["Age"] >= 60:
         add("Age", "年齡層風險上升", "年齡增長會提高代謝疾病風險，定期檢查的重要性也會提高。", "watch")
 
