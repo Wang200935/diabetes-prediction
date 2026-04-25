@@ -1,12 +1,13 @@
 import asyncio
 import time
 from collections import defaultdict, deque
+from functools import lru_cache
 
 import anyio
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import (
@@ -59,6 +60,28 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory=WEB_DIR), name="static")
 
 
+@lru_cache
+def _asset_versions() -> dict[str, str]:
+    return {
+        "styles.css": format((WEB_DIR / "styles.css").stat().st_mtime_ns, "x"),
+        "app.js": format((WEB_DIR / "app.js").stat().st_mtime_ns, "x"),
+    }
+
+
+def _render_page(filename: str) -> HTMLResponse:
+    html = (WEB_DIR / filename).read_text(encoding="utf-8")
+    versions = _asset_versions()
+    html = html.replace(
+        '/static/styles.css"',
+        f'/static/styles.css?v={versions["styles.css"]}"',
+    )
+    html = html.replace(
+        '/static/app.js"',
+        f'/static/app.js?v={versions["app.js"]}"',
+    )
+    return HTMLResponse(html)
+
+
 def _security_headers(path: str) -> dict:
     headers = dict(SECURITY_HEADERS)
     if path.startswith("/api/") or path in {"/result", "/assessment", "/about", "/"}:
@@ -88,23 +111,23 @@ def _check_predict_rate_limit(client_ip: str) -> None:
 
 
 @app.get("/", include_in_schema=False)
-def root() -> FileResponse:
-    return FileResponse(WEB_DIR / "home.html")
+def root() -> HTMLResponse:
+    return _render_page("home.html")
 
 
 @app.get("/assessment", include_in_schema=False)
-def assessment() -> FileResponse:
-    return FileResponse(WEB_DIR / "assessment.html")
+def assessment() -> HTMLResponse:
+    return _render_page("assessment.html")
 
 
 @app.get("/result", include_in_schema=False)
-def result_page() -> FileResponse:
-    return FileResponse(WEB_DIR / "result.html")
+def result_page() -> HTMLResponse:
+    return _render_page("result.html")
 
 
 @app.get("/about", include_in_schema=False)
-def about_page() -> FileResponse:
-    return FileResponse(WEB_DIR / "about.html")
+def about_page() -> HTMLResponse:
+    return _render_page("about.html")
 
 
 @app.get("/health", response_model=HealthOutput)
