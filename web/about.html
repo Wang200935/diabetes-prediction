@@ -53,7 +53,7 @@
             <p class="section-kicker">資料與模型</p>
             <h2>預測方式</h2>
             <p>
-              模型使用 BRFSS 2015 糖尿病健康指標資料集訓練。系統會把問卷中的健康狀況、病史、生活習慣與基本資料轉成模型特徵，再輸出糖尿病風險機率。
+              這個網站使用 BRFSS 2015 糖尿病健康指標資料集訓練。系統會把你填寫的健康狀況、病史、生活習慣與基本資料轉成模型特徵，再輸出糖尿病風險機率。
             </p>
             <div id="aboutModelInfo" class="about-note-list"></div>
           </article>
@@ -62,10 +62,31 @@
             <p class="section-kicker">模型評估</p>
             <h2>目前模型表現</h2>
             <ul class="benefit-list">
-              <li>模型會比較多種候選方法，優先選擇測試準確率較高的模型。</li>
-              <li>除了準確率，也保留 ROC-AUC、Average Precision 與 Brier Score 作為輔助檢查。</li>
-              <li>因為資料類別不平衡，結果適合做風險提醒，不適合直接當成診斷。</li>
+              <li>目前正式模型是經過機率校準的梯度提升分類模型。</li>
+              <li>模型選擇以測試準確率為優先，並用 ROC-AUC、Average Precision 與 Brier Score 交叉檢查。</li>
+              <li>目前 accuracy 約為 86.5%，ROC-AUC 約為 0.824，屬於可用的風險預測模型。</li>
             </ul>
+          </article>
+
+          <article class="sub-card">
+            <p class="section-kicker">資料來源</p>
+            <h2>模型看的是哪些資料</h2>
+            <ul class="benefit-list">
+              <li>資料集約 25 萬筆，其中非糖尿病樣本約 21.8 萬筆，糖尿病樣本約 3.5 萬筆。</li>
+              <li>目前模型使用 15 個欄位，包括高血壓、高膽固醇、BMI、吸菸、中風、心臟病史、運動、飲酒、自評健康、心理不佳天數、身體不佳天數、行走困難、年齡、教育程度與年收入。</li>
+              <li>使用者輸入的是實際年齡，後端會自動轉成模型需要的年齡分組。</li>
+            </ul>
+          </article>
+
+          <article class="sub-card">
+            <p class="section-kicker">模型流程</p>
+            <h2>網站怎麼算出風險</h2>
+            <ol class="benefit-list">
+              <li>先把問卷欄位做格式檢查，避免缺值與錯誤輸入。</li>
+              <li>將資料整理成模型固定的特徵順序，再送進已訓練完成的模型 artifact。</li>
+              <li>模型輸出一個 0 到 1 之間的風險機率，網站再把它轉成低、中、偏高、高四個區間。</li>
+              <li>結果頁最後會搭配規則式提醒，整理出需要注意的訊號與下一步建議。</li>
+            </ol>
           </article>
 
           <article class="sub-card about-wide">
